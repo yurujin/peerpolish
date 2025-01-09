@@ -1,0 +1,175 @@
+/* Main Layout */
+main {
+  display: flex;
+  flex: 1;
+  overflow: visible;
+}
+
+/* Left Panel */
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: 100vh; 
+  background: white;
+  padding: 20px;
+  border-right: 2px solid #e5e5e5;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 10px 0 0 10px;
+  box-sizing: border-box;
+}
+
+.upload-section {
+  flex: 0 0 auto; 
+  margin-bottom: 20px;
+}
+
+.upload-section h2, .article-viewer h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.upload-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background: #e7dad2;
+}
+
+#file-upload {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+}
+
+.upload-btn {
+  background: linear-gradient(90deg, #ffbe7a, #fa7f6f);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+}
+
+.upload-btn:hover {
+  background: linear-gradient(90deg, #fa7f6f, #ffbe7a);
+}
+
+.article-viewer {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  background: white;
+  box-sizing: border-box;
+  overflow: hidden; 
+}
+
+#article-preview {
+  flex: 1; 
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: auto; 
+  min-height: 50px; 
+  box-sizing: border-box;
+}
+
+#article-preview p {
+  font-family: 'Courier New', Courier, monospace; 
+  white-space: pre-wrap; 
+}
+
+.content-preview {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.content-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+
+.content-preview table th,
+.content-preview table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.content-preview img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px auto;
+}
+
+/* Right Panel */
+.right-panel {
+  width: 60%;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 0 10px 10px 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.review-tabs {
+  display: flex;
+  justify-content: space-around; 
+  margin-bottom: 20px;
+  background: #82b0d2;
+  border-radius: 8px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: #82b0d2;
+  padding: 10px;
+  border: none;
+  border-radius:5px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.tab-btn.active, .tab-btn:hover {
+  background: white;
+  color: #82b0d2;
+  font-weight: bold;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.review-content {
+  display: none;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.review-content.active {
+  display: block;
+}
