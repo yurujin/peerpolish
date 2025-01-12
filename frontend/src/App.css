@@ -69,11 +69,9 @@ main {
   display: flex;
   flex-direction: column;
   background: white;
-  padding: 10px;
   box-sizing: border-box;
   overflow: auto;
   height: 100%;
-  border: 1px solid #ccc;
   border-radius: 5px;
 }
 

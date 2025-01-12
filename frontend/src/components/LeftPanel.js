@@ -1,37 +1,47 @@
 import React, { useState } from "react";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import mammoth from "mammoth";
+import axios from "axios"; 
+
 
 function LeftPanel() {
-  const [fileType, setFileType] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
-  const [wordContent, setWordContent] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    const fileExtension = file.type;
-    setFileType(fileExtension);
+    setError(null);
+    setPdfUrl(null);
 
-    if (fileExtension === "application/pdf") {
+    if (file.type === "application/pdf") {
       const pdfBlobUrl = URL.createObjectURL(file);
       setPdfUrl(pdfBlobUrl);
+      return;
     }
 
-    if (fileExtension === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const result = await mammoth.extractRawText({ arrayBuffer: e.target.result });
-          setWordContent(result.value);
-        } catch (error) {
-          console.error("Error reading Word file:", error);
-          setWordContent("Failed to read Word document.");
-        }
-      };
-      reader.readAsArrayBuffer(file);
+    if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      setLoading(true);
+
+      try {
+        const response = await axios.post("http://localhost:8000/upload/", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          responseType: "blob",
+        });
+
+        const pdfBlobUrl = URL.createObjectURL(response.data);
+        setPdfUrl(pdfBlobUrl);
+      } catch (err) {
+        console.error("Error converting Word to PDF:", err);
+        setError("Failed to convert Word document to PDF.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -48,17 +58,14 @@ function LeftPanel() {
       <div className="article-viewer">
         <h2>Article Preview</h2>
         <div id="article-preview" className="content-preview">
-          {fileType === "application/pdf" && pdfUrl && (
+        {loading && <p>Loading...</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {pdfUrl && (
             <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
               <Viewer fileUrl={pdfUrl} />
             </Worker>
           )}
-          {fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && wordContent && (
-            <div>
-              <pre>{wordContent}</pre>
-            </div>
-          )}
-          {!fileType && <p>Your uploaded article will appear here...</p>}
+          {!pdfUrl && !loading && !error && <p>Your uploaded article will appear here...</p>}
         </div>
       </div>
     </section>
