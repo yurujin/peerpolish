@@ -106,26 +106,28 @@ main {
   background-color: #fff;
 }
 
-
-.content-preview table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 10px 0;
+.toolbar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.content-preview table th,
-.content-preview table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
+.toolbar button {
+  background-color: #73c9b2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.content-preview img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 10px auto;
+.toolbar button:hover {
+  background-color: #0056b3;
 }
+
 
 /* Right Panel */
 .right-panel {
