@@ -7,6 +7,7 @@ import RightPanel from "./components/RightPanel";
 import Footer from "./components/Footer";
 import "./App.css";
 
+
 function App() {
   return (
     <div>
