@@ -28,3 +28,21 @@ export const uploadFile = async (file) => {
     }
 };
 
+
+export const generateAIResponse = async (file) => {
+    console.log("Preparing to send API request with file:", file); // 检查 file 是否正确
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await axios.post(`${API_URL}/generate-response/`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        console.log("API Response received:", response.data); // 检查响应数据
+        return response.data.responses;
+    } catch (error) {
+        console.error("Error during API request:", error); // 打印错误日志
+        throw new Error("Failed to generate AI response.");
+    }
+};

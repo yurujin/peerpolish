@@ -5,9 +5,8 @@ import { zoomPlugin } from "@react-pdf-viewer/zoom";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import axios from "axios";
 
-function LeftPanel() {
-  const [selectedFile, setSelectedFile] = useState(null); // 保存用户选择的文件
-  const [pdfUrl, setPdfUrl] = useState(null);
+function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl }) {
+  const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -16,48 +15,41 @@ function LeftPanel() {
 
 
   const handleFileChange = (event) => {
-    // 保存用户选择的文件
     const file = event.target.files[0];
-    setSelectedFile(file);
-    setPdfUrl(null); // 清除之前的 PDF URL
-    setError(null);  // 清除之前的错误信息
+    setSelectedFile(file); // 本地保存文件
+    onFileSelect(file); // 将文件传递给 App.js
+    setError(null); // 清除错误信息
   };
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setError("Please select a file to upload."); // 如果没有选择文件，显示错误
+      setError("Please select a file to upload.");
       return;
     }
-
-    const file = selectedFile;
 
     setError(null);
-    setPdfUrl(null);
 
-    if (file.type === "application/pdf") {
-      // 如果是 PDF 文件，直接显示
-      const pdfBlobUrl = URL.createObjectURL(file);
-      setPdfUrl(pdfBlobUrl);
+    if (selectedFile.type === "application/pdf") {
+      const pdfBlobUrl = URL.createObjectURL(selectedFile);
+      onPdfPreview(pdfBlobUrl); // 将 PDF URL 传递给 App.js
       return;
     }
 
-    if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-      // 如果是 Word 文件，上传并转换为 PDF
-      const formData = new FormData();
-      formData.append("file", file);
-
+    if (selectedFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
       setLoading(true);
 
       try {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
         const response = await axios.post("http://localhost:8000/upload/", formData, {
           headers: { "Content-Type": "multipart/form-data" },
-          responseType: "blob", // 返回二进制流
+          responseType: "blob",
         });
 
         const pdfBlobUrl = URL.createObjectURL(response.data);
-        setPdfUrl(pdfBlobUrl);
+        onPdfPreview(pdfBlobUrl); // 更新 PDF 预览
       } catch (err) {
-        console.error("Error converting Word to PDF:", err);
         setError("Failed to convert Word document to PDF.");
       } finally {
         setLoading(false);
@@ -66,7 +58,7 @@ function LeftPanel() {
       setError("Unsupported file type. Please upload a PDF or Word document.");
     }
   };
-
+  
   return (
     <section className="left-panel">
       <div className="upload-section">

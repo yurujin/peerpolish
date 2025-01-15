@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 import os
 from io import BytesIO
 import tempfile
-import openai
+from openai import OpenAI
 from PyPDF2 import PdfReader
 from dotenv import load_dotenv
 
@@ -22,8 +22,10 @@ app.add_middleware(
 )
 
 # 设置 OpenAI API 密钥
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  
 
+# 缓存结构，用于存储上传文件的中间结果
+uploaded_files_cache = {}
 
 # 加载 Prompt 模板
 def load_prompt(file_path):
@@ -38,24 +40,28 @@ PROMPTS = {
     "Overall": load_prompt("templates/overall_review.txt"),
 }
 
-# 调用 OpenAI API
+
+
 def call_openai_chat_api(prompt, model="gpt-4o"):
     try:
-        chat_completion = openai.ChatCompletion.create(
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
             model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0,
+            temperature=0
         )
-        return chat_completion.choices[0].message.content.strip()
+        chat_completion_dict = chat_completion.model_dump()
+        return chat_completion_dict["choices"][0]["message"]["content"]
     except Exception as e:
+
         print(f"Error during API call: {str(e)}")
         return None
 
-
 def extract_text_from_pdf(pdf_stream):
-    """
-    从 PDF 文件中提取文本。
-    """
     pdf_reader = PdfReader(pdf_stream)
     text = ""
     for page in pdf_reader.pages:
@@ -63,17 +69,10 @@ def extract_text_from_pdf(pdf_stream):
     return text
 
 async def generate_openai_responses(pdf_stream):
-    """
-    提取 PDF 文本并生成 OpenAI 回复。
-    """
-    print("Extracting text from PDF for OpenAI response...")
     text = extract_text_from_pdf(pdf_stream)
-    
-    # 检查文本长度并截断
     if len(text) > 8000:
         text = text[:8000] + "\n[Text truncated for processing]"
 
-    print("Generating OpenAI responses...")
     overall_review = call_openai_chat_api(f"Provide an overall review of the following article:\n{text}")
     section_review = call_openai_chat_api(f"Analyze the article section by section:\n{text}")
     criteria_review = call_openai_chat_api(f"Evaluate the article based on specific criteria:\n{text}")
@@ -86,90 +85,82 @@ async def generate_openai_responses(pdf_stream):
 
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
-    """
-    上传文件处理：
-    - 如果是 PDF，直接返回文件流和 OpenAI 回复。
-    - 如果是 Word 文件，转换为 PDF 后返回文件流和 OpenAI 回复。
-    """
     try:
         print(f"Received file: {file.filename}, type: {file.content_type}")
 
-        # 初始化回复字典
-        responses = {}
-
-        # 处理 PDF 文件
         if file.content_type == "application/pdf":
             print("Processing a PDF file.")
-            pdf_stream = BytesIO(file.file.read())
-            
-            # 生成 OpenAI 回复
-            responses = await generate_openai_responses(pdf_stream)
+            pdf_stream = BytesIO(await file.read())
+            uploaded_files_cache[file.filename] = {"pdf_stream": pdf_stream}
+            return StreamingResponse(pdf_stream, media_type="application/pdf")
 
-            # 返回 JSON 和文件流分开
-            return JSONResponse(
-                content={
-                    "responses": responses,
-                },
-                status_code=200,
-            )
-        
-        # 处理 Word 文件
         elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             print("Processing a Word file.")
             pdf_stream = await convert_word_to_pdf(file)
+            uploaded_files_cache[file.filename] = {"pdf_stream": pdf_stream}
+            return StreamingResponse(pdf_stream, media_type="application/pdf")
 
-            # 生成 OpenAI 回复
-            responses = await generate_openai_responses(pdf_stream)
-
-            # 返回 JSON 和文件流分开
-            return JSONResponse(
-                content={
-                    "responses": responses,
-                },
-                status_code=200,
-            )
-
-        # 不支持的文件类型
         else:
+            print("Unsupported file type.")
             return JSONResponse(content={"error": "Unsupported file type"}, status_code=400)
-    
+
     except Exception as e:
         print(f"Error during file upload: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-async def convert_word_to_pdf(file: UploadFile):
-    """
-    使用 unoconv 将 Word 转换为 PDF。
-    """
-    try:
-        print("Starting Word to PDF conversion...")
 
-        # 创建临时文件保存上传的 Word 文档
+
+@app.post("/generate-response/")
+async def generate_response(file: UploadFile = File(...)):
+    try:
+        print(f"Received file for AI response: {file.filename}, type: {file.content_type}")
+
+        if file.filename in uploaded_files_cache:
+            pdf_stream = uploaded_files_cache[file.filename]["pdf_stream"]
+            pdf_stream.seek(0)  # 确保文件流从开头读取
+            print(f"Using cached PDF for AI response: {file.filename}")
+        else:
+            print("File not found in cache, processing...")
+            if file.content_type == "application/pdf":
+                pdf_stream = BytesIO(await file.read())
+            elif file.content_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                pdf_stream = await convert_word_to_pdf(file)
+            else:
+                print("Unsupported file type for AI response.")
+                return JSONResponse(content={"error": "Unsupported file type for AI response"}, status_code=400)
+
+        responses = await generate_openai_responses(pdf_stream)
+        print("AI responses generated successfully.")
+        return JSONResponse(content={"responses": responses}, status_code=200)
+
+    except Exception as e:
+        print(f"Error generating AI response: {e}")
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+
+
+async def convert_word_to_pdf(file: UploadFile):
+    try:
+        print(f"Converting Word to PDF: {file.filename}")
         with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_file:
+            # 保存上传的文件
             tmp_file.write(await file.read())
             tmp_file_path = tmp_file.name
 
-        # 创建输出的 PDF 临时文件路径
         pdf_file_path = f"{tmp_file_path}.pdf"
-
-        # 调用 unoconv 将 Word 转换为 PDF
         process = Popen(["unoconv", "-f", "pdf", "-o", pdf_file_path, tmp_file_path], stdout=PIPE, stderr=PIPE)
         stdout, stderr = process.communicate()
 
         if process.returncode != 0:
             raise Exception(f"Unoconv error: {stderr.decode('utf-8')}")
 
-        print("PDF successfully generated.")
-
-        # 读取生成的 PDF 文件
         with open(pdf_file_path, "rb") as pdf_file:
             pdf_data = pdf_file.read()
 
-        # 删除临时文件
         os.remove(tmp_file_path)
         os.remove(pdf_file_path)
-
-        # 返回 PDF 文件流
+        print(f"PDF conversion successful: {pdf_file_path}")
         return BytesIO(pdf_data)
 
     except Exception as e:
