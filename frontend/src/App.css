@@ -2,7 +2,7 @@
 main {
   display: flex;
   flex: 1;
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* Left Panel */
@@ -10,13 +10,14 @@ main {
   display: flex;
   flex-direction: column;
   width: 40%;
-  height: 100vh; 
+  height: 86vh; 
   background: white;
   padding: 20px;
   border-right: 2px solid #e5e5e5;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   border-radius: 10px 0 0 10px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .upload-section {
@@ -85,7 +86,6 @@ main {
   overflow-y: auto;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   height: auto; 
-  min-height: 50px; 
   box-sizing: border-box;
 }
 
@@ -138,6 +138,8 @@ main {
   display: flex;
   flex-direction: column;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  height: 82vh;
+  overflow: hidden;
 }
 
 .review-tabs {
@@ -180,4 +182,63 @@ main {
 
 .review-content.active {
   display: block;
+}
+
+/* Overall Tab Styles */
+.right-panel .review-content strong {
+  font-weight: bold;
+}
+
+/* Section Tab Styles */
+.section-aspect h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #0056b3;
+}
+
+.section-aspect h4,
+.section-aspect h5 {
+  margin-top: 15px;
+  font-size: 1.2em;
+  color: #333;
+}
+
+/* Criteria Tab Styles */
+/* Criteria Container */
+.criteria-aspect {
+  margin-bottom: 20px;
+}
+
+.criteria-aspect h3 {
+  font-size: 1.5em;
+  color: #0056b3;
+  margin-bottom: 10px;
+}
+
+.criteria-aspect h4 {
+  font-size: 1.3em;
+  color: #333;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.criteria-aspect h5 {
+  font-size: 1.2em;
+  color: #555;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.criteria-aspect strong {
+  font-weight: bold;
+  color: #000;
+}
+
+.criteria-aspect li {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+.criteria-aspect br {
+  line-height: 1.5;
 }

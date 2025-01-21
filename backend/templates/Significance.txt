@@ -41,55 +41,74 @@
    - Suggest ways to enhance clarity, depth, or relevance, referencing specific sections or findings.
 
 
-### Input Format
-   - Manuscript Title: {title}
-   - Full Content: {content}
 
 ### Expected Output
+### Expected Output
+   - Structure:
+      {
+      "criteria": [
+         {
+            "aspect": "Theoretical Contribution",
+            "recommendations": [
+            {
+               "recommendation": "Provide a clearer explanation of the proposed model in Section 4.3 and its relevance to existing theories.",
+               "reference": "Section 4.3: 'The proposed model builds upon existing theories but lacks explicit differentiation from previous frameworks.'"
+            },
+            {
+               "recommendation": "Expand on the implications of the theoretical model discussed in Section 5.",
+               "reference": "Section 5: 'Theoretical implications are briefly mentioned but not elaborated upon.'"
+            }
+            ]
+         },
+         {
+            "aspect": "Practical Applicability",
+            "recommendations": [
+            {
+               "recommendation": "Clarify the real-world scenarios where the findings can be applied, as outlined in Section 6.2.",
+               "reference": "Section 6.2: 'The study claims applicability in customer interaction systems without providing specific use cases.'"
+            }
+            ]
+         },
+         {
+            "aspect": "Future Research Guidance",
+            "recommendations": [
+            {
+               "recommendation": "Propose additional research directions based on the limitations highlighted in Section 7.",
+               "reference": "Section 7: 'The study acknowledges limitations but does not outline specific future research directions.'"
+            }
+            ]
+         },
+         {
+            "aspect": "Knowledge Contribution",
+            "recommendations": [
+            {
+               "recommendation": "Provide more depth in Section 3.2 by explicitly linking the findings to gaps identified in prior literature.",
+               "reference": "Section 3.2: 'The connection to prior research is briefly mentioned but lacks in-depth discussion.'"
+            }
+            ]
+         }
+      ],
+      "overallComment": {
+         "summary": "The paper presents a significant contribution to theoretical development and practical applications, but certain areas, such as implications and future research directions, require more depth.",
+         "recommendations": [
+            "Expand the discussion on theoretical implications in Section 5.",
+            "Provide specific real-world use cases to demonstrate practical applicability in Section 6.2."
+         ]
+      }
+      }
 
-   - Significance or Importance Review:
-      For each criterion (Theoretical Contribution, Practical Applicability, Future Research Guidance, Knowledge Contribution):
-      1.List all actionable recommendations as bullet points in a numbered format (1, 2, 3).
-      2.For each recommendation, return the referenced original sentence or paragraph from the manuscript.
+   - Details:
+      1.Criteria:
+         - aspect: Each criterion from the evaluation list (e.g., "Theoretical Contribution").
+         - recommendations: Array of recommendations specific to the aspect, with each entry containing:
+            recommendation: The actionable critique or suggestion.
+            reference: The specific sentence or paragraph from the manuscript related to the recommendation.
 
-   * Theoretical Contribution *: 
-      Provide concise, specific comments and recommendations.
-      Include the original text from the manuscript that relates to the recommendations, formatted as follows:
-      
-      Recommendation #1: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      
-      Recommendation #2: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      ...
+      2.Overall Comment:
+         - summary: A high-level summary of the paper's significance and contributions.
+         - recommendations: An array of critical, overall recommendations.
 
-   * Practical Applicability *:
-      Recommendation #1: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      
-      Recommendation #2: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      ...
 
-   * Future Research Guidance *:
-      Recommendation #1: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      
-      Recommendation #2: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      ...
-
-   * Knowledge Contribution *:
-      Recommendation #1: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      
-      Recommendation #2: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      ...
-
-   - Overall Comment on Significance:
-
-      Summary: [Conclude with 2-3 sentences summarizing the paper’s significance, its contributions, and areas for improvement.]
-      Recommendations:[Provide specific and actionable overall recommendations, citing the most critical areas for improvement.]
-
-### Note: Adjust the number of enumerated points and the level of detail to match the length and complexity of the paper, ensuring a thorough yet focused review.
+### Note: 
+   - Adjust the number of recommendations and the level of detail to match the length and complexity of the paper.
+   - Ensure that each recommendation is clear, actionable, and tied to a specific part of the manuscript.  

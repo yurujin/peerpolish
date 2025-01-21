@@ -56,85 +56,79 @@
    - Provide suggestions to improve the interpretation of results and ensure alignment with the data.
 
 
-### Expected Output:
-{
-  "criteria": [
-    {
-      "aspect": "Supporting Figures and Tables",
-      "recommendations": [
-        {
-          "recommendation": "Your recommendation here.",
-          "reference": "Referenced original text from the manuscript here."
-        },
-        {
-          "recommendation": "Your recommendation here.",
-          "reference": "Referenced original text from the manuscript here."
-        }
-      ]
-    },
-    {
-      "aspect": "Data Quality",
-      "recommendations": [
-        {
-          "recommendation": "Your recommendation here.",
-          "reference": "Referenced original text from the manuscript here."
-        }
-      ]
-    },
-    {
-      "aspect": "Precise Methodology",
-      "recommendations": [
-        {
-          "recommendation": "Your recommendation here.",
-          "reference": "Referenced original text from the manuscript here."
-        }
-      ]
-    },
-    {
-      "aspect": "Coherence and Integrity",
-      "recommendations": [
-        {
-          "recommendation": "Your recommendation here.",
-          "reference": "Referenced original text from the manuscript here."
-        }
-      ]
-    },
-    {
-      "aspect": "Quality of Argumentation",
-      "recommendations": [
-        {
-          "recommendation": "Your recommendation here.",
-          "reference": "Referenced original text from the manuscript here."
-        }
-      ]
-    },
-    {
-      "aspect": "Logical Soundness",
-      "recommendations": [
-        {
-          "recommendation": "Your recommendation here.",
-          "reference": "Referenced original text from the manuscript here."
-        }
-      ]
-    },
-    {
-      "aspect": "Main Findings and Discussion",
-      "recommendations": [
-        {
-          "recommendation": "Your recommendation here.",
-          "reference": "Referenced original text from the manuscript here."
-        }
-      ]
-    }
-  ],
-  "overallComment": {
-    "summary": "Summarize the overall soundness and contributions of the paper here.",
-    "recommendations": [
-      "Actionable overall recommendation 1 here.",
-      "Actionable overall recommendation 2 here."
-    ]
-  }
-}
+### Input Format
+   - Full Content: {content}
 
+### Expected Output
+
+   - Soundness or Rigour Review:
+      For each criterion (Supporting Figures and Tables, Data Quality, Precise Methodology, Coherence and Integrity, Quality of Argumentation, Logical Soundness, Main Findings and Discussion):
+      1.List all actionable recommendations as bullet points in a numbered format (1, 2, 3).
+      2.For each recommendation, return the referenced original sentence or paragraph from the manuscript.
+
+   * Supporting Figures and Tables *: 
+      Provide concise, specific comments and recommendations.
+      Include the original text from the manuscript that relates to the recommendations, formatted as follows:
+      
+      Recommendation #1: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      
+      Recommendation #2: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      ...
+
+   * Data Quality *:
+      Recommendation #1: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      
+      Recommendation #2: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      ...
+
+   * Precise Methodology *:
+      Recommendation #1: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      
+      Recommendation #2: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      ...
+
+   * Coherence and Integrity *:
+      Recommendation #1: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      
+      Recommendation #2: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      ...
+
+   * Quality of Argumentation *:
+      Recommendation #1: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      
+      Recommendation #2: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      ...
+
+
+   * Logical Soundness *:
+      Recommendation #1: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      
+      Recommendation #2: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      ...
+
+* Main Findings and Discussion*:
+      Recommendation #1: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      
+      Recommendation #2: [Description of the recommendation]
+      Excerpt from Manuscript: [Include the relevant original text here].
+      ...
+
+   - Overall Comment on Significance:
+
+      Summary: [Summarize the overall soundness and contributions of the paper in clear, actionable terms].  
+      Recommendations:[Provide specific and actionable overall recommendations, citing the most critical areas for improvement.]
 
 ### Note: Adjust the number of enumerated points and the level of detail to match the length and complexity of the paper, ensuring a thorough yet focused review.

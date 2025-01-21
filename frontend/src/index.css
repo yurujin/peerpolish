@@ -17,6 +17,7 @@ header {
   padding: 20px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 4%;
 }
 
 header nav h1 {
@@ -32,4 +33,5 @@ footer {
   background: #8ecfc9;
   color: white;
   font-size: 14px;
+  height: 4vh;
 }

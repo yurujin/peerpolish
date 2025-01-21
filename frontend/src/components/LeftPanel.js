@@ -3,6 +3,8 @@ import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { zoomPlugin } from "@react-pdf-viewer/zoom";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
+
+
 import axios from "axios";
 
 function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl }) {
@@ -13,7 +15,7 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl }) {
   const zoomPluginInstance = zoomPlugin();
   const { ZoomIn, ZoomOut, ZoomPopover } = zoomPluginInstance;
 
-
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file); // 本地保存文件
@@ -85,7 +87,7 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl }) {
               </div>
               <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
                 <Viewer fileUrl={pdfUrl} plugins={[zoomPluginInstance]} />
-              </Worker>
+              </Worker>     
             </div>
           )}
           {!pdfUrl && !loading && !error && <p>Your uploaded article will appear here...</p>}

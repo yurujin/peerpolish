@@ -40,55 +40,71 @@
    Examine any theoretical advancements proposed in the paper.
    Offer targeted suggestions to refine or expand these insights.
 
-### Input Format
-   - Manuscript Title: {title}
-   - Full Content: {content}
 
 ### Expected Output
+   - Structure:Please strictly follow the following structure to generate response, don’t change any structure or word of the format.
+   {
+      "criteria": [
+         {
+            "aspect": "Innovative Methods",
+            "recommendations": [
+            {
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
+            },
+            {
+               "recommendation": "Describe your second recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
+            }
+            ]
+         },
+         {
+            "aspect": "New Empirical Results",
+            "recommendations": [
+            {
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
+            }
+            ]
+         },
+         {
+            "aspect": "Novel Interpretations",
+            "recommendations": [
+            {
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
+            }
+            ]
+         },
+         {
+            "aspect": "Original Theoretical Insights",
+            "recommendations": [
+            {
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
+            }
+            ]
+         }
+      ],
+      "overallComment": {
+         "summary": "Summarize the overall novelty and contributions of the paper here.",
+         "recommendations": [
+            "Provide specific and actionable overall recommendations here."
+         ]
+      }
+   }
 
-   - Novelty or Originality Review:
-      For each criterion (Innovative Methods, New Empirical Results, Novel Interpretations, Original Theoretical Insights):
-      1.List all actionable recommendations as bullet points in a numbered format (1, 2, 3).
-      2.For each recommendation, return the referenced original sentence or paragraph from the manuscript in JSON format.
+   - Details:
+      1.Criteria:
+         - Includes four categories: Innovative Methods, New Empirical Results, Novel Interpretations, and Original Theoretical Insights.
+         - Each category contains an array of recommendations.
+         - Each recommendation includes:
+            A recommendation field: Specific, actionable critique.
+            A reference field: Quoted original text from the manuscript.
+      2.Overall Comment:
+         - A high-level summary of the paper's novelty and contributions.
+         - An array of recommendations with the most critical areas for improvement.
 
-   *Innovative Methods*: 
-      Provide concise, specific comments and recommendations.
-      Include the original text from the manuscript that relates to the recommendations, formatted as follows:
-      
-      Recommendation #1: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      
-      Recommendation #2: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      ...
-
-   *New Empirical Results*:
-      Recommendation #1: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      
-      Recommendation #2: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      ...
-
-   *Novel Interpretations*:
-      Recommendation #1: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      
-      Recommendation #2: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      ...
-
-   *Original Theoretical Insights*:
-      Recommendation #1: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      
-      Recommendation #2: [Description of the recommendation]
-      Excerpt from Manuscript: [Include the relevant original text here].
-      ...
-
-   - Overall Comment on Novelty:
-
-      Summary: [Summarize the overall novelty and contributions of the paper in clear, actionable terms.]
-      Recommendations:[Provide specific and actionable overall recommendations, citing the most critical areas for improvement.]
-
-### Note: Adjust the number of enumerated points and the level of detail to match the length and complexity of the paper, ensuring a thorough yet focused review.
+### Note: 
+   - Adjust the number of recommendations and the level of detail to match the length and complexity of the paper.
+   - Ensure that each recommendation is clear, actionable, and tied to a specific part of the manuscript.  

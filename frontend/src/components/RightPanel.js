@@ -3,12 +3,12 @@ import { generateAIResponse } from "../services/api";
 
 function RightPanel({ file }) {
   const [responses, setResponses] = useState(null);
-  const [activeTab, setActiveTab] = useState("overall"); // 当前活动的 tab
+  const [activeTab, setActiveTab] = useState("overall");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleGenerateResponse = async () => {
-    console.log("File passed to RightPanel:", file); // 确认 file 是否正确传递
+    console.log("File passed to RightPanel:", file);
     if (!file) {
       setError("No file selected for generating response.");
       return;
@@ -19,8 +19,8 @@ function RightPanel({ file }) {
     setResponses(null);
 
     try {
-      const aiResponses = await generateAIResponse(file); // 调用 API
-      console.log("AI Responses received:", aiResponses); // 检查响应内容
+      const aiResponses = await generateAIResponse(file);
+      console.log("AI Responses received:", aiResponses);
       setResponses(aiResponses);
     } catch (err) {
       console.error("Error generating AI response:", err);
@@ -30,23 +30,78 @@ function RightPanel({ file }) {
     }
   };
 
-  const renderContent = () => {
-    if (!responses) {
-      return "<p>AI responses will appear here once generated...</p>";
+  // 解析 Overall Tab 的内容
+  const renderOverall = (content) => {
+    if (!content) return <p>No overall review available.</p>;
+
+    // 替换加粗标题和段落换行
+    const parsedContent = content
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\n/g, "<br>");
+    return <div dangerouslySetInnerHTML={{ __html: parsedContent }} />;
+  };
+
+  // 解析 Section Tab 的内容
+  const renderSection = (content) => {
+    if (!content) return <p>No overall review available.</p>;
+
+    // 替换加粗标题和段落换行
+    const parsedContent = content
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\n/g, "<br>");
+    return <div dangerouslySetInnerHTML={{ __html: parsedContent }} />;
+  };
+
+  const renderCriteria = (criteria) => {
+    if (!criteria || typeof criteria !== "object") {
+      return <p>No criteria review available.</p>;
     }
   
+    // 遍历 criteria 的每个 key（如 Novelty, Significance, Soundness）
+    return Object.keys(criteria).map((aspect) => (
+      <div key={aspect} className="criteria-aspect">
+        {/* 渲染每个 aspect 的标题 */}
+        <h3>{aspect}</h3>
+        {/* 解析 Markdown 内容为 HTML */}
+        <div
+          dangerouslySetInnerHTML={{
+            __html: parseMarkdownToHTML(criteria[aspect]),
+          }}
+        />
+      </div>
+    ));
+  };
+  
+  // Markdown 转 HTML 的解析函数
+  const parseMarkdownToHTML = (markdownText) => {
+    if (!markdownText) return "";
+  
+    // 转换 Markdown 标题、加粗等为 HTML
+    return markdownText
+      .replace(/## (.+)/g, "<h4>$1</h4>") // 二级标题
+      .replace(/### (.+)/g, "<h5>$1</h5>") // 三级标题
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") // 加粗
+      .replace(/- \*\*(.+?)\*\*: (.+)/g, "<li><strong>$1</strong>: $2</li>") // 列表项
+      .replace(/\n/g, "<br>"); // 换行
+  };
+  
+
+  const renderContent = () => {
+    if (!responses) {
+      return <p>AI responses will appear here once generated...</p>;
+    }
+
     switch (activeTab) {
       case "overall":
-        return responses.overall || "No overall review available.";
+        return <p>{renderOverall(responses.overallReview) || "No overall review available."}</p>;
       case "section":
-        return responses.section || "No section review available.";
+        return <p>{renderSection(responses.sectionReview) || "No section review available."}</p>;
       case "criteria":
-        return responses.criteria || "No criteria review available.";
+        return <p>{renderCriteria(responses.criteria) || "No section review available." }</p>;
       default:
         return null;
     }
   };
-  
 
   return (
     <section className="right-panel">
@@ -76,9 +131,7 @@ function RightPanel({ file }) {
       <div className="review-content">
         {loading && <p>Loading AI responses...</p>}
         {error && <p style={{ color: "red" }}>{error}</p>}
-        {!loading && !error && (
-          <div dangerouslySetInnerHTML={{ __html: renderContent() }}></div>
-        )}
+        {!loading && !error && renderContent()}
       </div>
     </section>
   );
