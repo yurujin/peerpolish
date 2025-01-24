@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { generateAIResponse } from "../services/api";
 
-function RightPanel({ file }) {
+function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetData }) {
   const [responses, setResponses] = useState(null);
   const [activeTab, setActiveTab] = useState("overall");
   const [loading, setLoading] = useState(false);
@@ -13,15 +13,42 @@ function RightPanel({ file }) {
       setError("No file selected for generating response.");
       return;
     }
-
+  
     setLoading(true);
     setError(null);
     setResponses(null);
-
+  
     try {
       const aiResponses = await generateAIResponse(file);
       console.log("AI Responses received:", aiResponses);
-      setResponses(aiResponses);
+  
+      let parsedSectionReview = null;
+      try {
+        const match = aiResponses.sectionReview.match(/```json\n([\s\S]*?)```/);
+        if (match && match[1]) {
+          parsedSectionReview = JSON.parse(match[1]);
+        }
+        console.log("Parsed Section Review:", parsedSectionReview);
+      } catch (err) {
+        console.error("Failed to parse section review:", err);
+      }
+  
+      setResponses({
+        ...aiResponses,
+        sectionReview: parsedSectionReview ? parsedSectionReview.section_review : null,
+      });
+  
+      // 提取引用和位置信息
+      const references = parsedSectionReview
+        ? parsedSectionReview.section_review.map((item, index) => ({
+            reference: item.reference,
+            id: index,
+            position: item.position, // 添加 position 数据
+          }))
+        : [];
+      onSetHighlightedReferences(references);
+  
+      onSetData(parsedSectionReview?.section_review, aiResponses.criteria); // 保存 Section 和 Criteria 数据
     } catch (err) {
       console.error("Error generating AI response:", err);
       setError("Failed to generate AI response.");
@@ -29,62 +56,73 @@ function RightPanel({ file }) {
       setLoading(false);
     }
   };
+  
 
-  // 解析 Overall Tab 的内容
-  const renderOverall = (content) => {
-    if (!content) return <p>No overall review available.</p>;
-
-    // 替换加粗标题和段落换行
-    const parsedContent = content
-      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\n/g, "<br>");
-    return <div dangerouslySetInnerHTML={{ __html: parsedContent }} />;
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    onSetActiveTab(tab);
+  
+    if (tab === "section" && responses?.sectionReview) {
+      const references = responses.sectionReview.map((item, index) => ({
+        reference: item.reference,
+        id: index,
+        position: item.position, // 添加 position 数据
+      }));
+      onSetHighlightedReferences(references); // 更新引用
+    }
   };
+  
 
-  // 解析 Section Tab 的内容
-  const renderSection = (content) => {
-    if (!content) return <p>No overall review available.</p>;
+  const renderSection = (sections) => {
+    if (!sections || !Array.isArray(sections)) {
+      return <p>No section review available.</p>;
+    }
 
-    // 替换加粗标题和段落换行
-    const parsedContent = content
-      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\n/g, "<br>");
-    return <div dangerouslySetInnerHTML={{ __html: parsedContent }} />;
+    return sections.map((item, index) => (
+      <div key={index}>
+        <h3>{item.section}</h3>
+        <p>
+          <strong>Critique:</strong> {item.critique}
+        </p>
+        <p>
+          <strong>Recommendation:</strong>{" "}
+          <span
+            onClick={() => console.log(`Jump to reference ID: ${index}`)}
+            style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
+          >
+            {item.recommendation}
+          </span>
+        </p>
+      </div>
+    ));
   };
 
   const renderCriteria = (criteria) => {
     if (!criteria || typeof criteria !== "object") {
       return <p>No criteria review available.</p>;
     }
-  
-    // 遍历 criteria 的每个 key（如 Novelty, Significance, Soundness）
+
     return Object.keys(criteria).map((aspect) => (
       <div key={aspect} className="criteria-aspect">
-        {/* 渲染每个 aspect 的标题 */}
         <h3>{aspect}</h3>
-        {/* 解析 Markdown 内容为 HTML */}
-        <div
-          dangerouslySetInnerHTML={{
-            __html: parseMarkdownToHTML(criteria[aspect]),
-          }}
-        />
+        <div>
+          {criteria[aspect]
+            .split("\n")
+            .map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}
+        </div>
       </div>
     ));
   };
-  
-  // Markdown 转 HTML 的解析函数
-  const parseMarkdownToHTML = (markdownText) => {
-    if (!markdownText) return "";
-  
-    // 转换 Markdown 标题、加粗等为 HTML
-    return markdownText
-      .replace(/## (.+)/g, "<h4>$1</h4>") // 二级标题
-      .replace(/### (.+)/g, "<h5>$1</h5>") // 三级标题
-      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>") // 加粗
-      .replace(/- \*\*(.+?)\*\*: (.+)/g, "<li><strong>$1</strong>: $2</li>") // 列表项
-      .replace(/\n/g, "<br>"); // 换行
+
+  const renderOverall = (content) => {
+    if (!content) return <p>No overall review available.</p>;
+    const parsedContent = content
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\n/g, "<br>");
+    return <div dangerouslySetInnerHTML={{ __html: parsedContent }} />;
   };
-  
 
   const renderContent = () => {
     if (!responses) {
@@ -93,11 +131,11 @@ function RightPanel({ file }) {
 
     switch (activeTab) {
       case "overall":
-        return <p>{renderOverall(responses.overallReview) || "No overall review available."}</p>;
+        return renderOverall(responses.overallReview);
       case "section":
-        return <p>{renderSection(responses.sectionReview) || "No section review available."}</p>;
+        return renderSection(responses.sectionReview);
       case "criteria":
-        return <p>{renderCriteria(responses.criteria) || "No section review available." }</p>;
+        return renderCriteria(responses.criteria);
       default:
         return null;
     }
@@ -108,19 +146,19 @@ function RightPanel({ file }) {
       <div className="review-tabs">
         <button
           className={`tab-btn ${activeTab === "overall" ? "active" : ""}`}
-          onClick={() => setActiveTab("overall")}
+          onClick={() => handleTabChange("overall")}
         >
           Overall Review
         </button>
         <button
           className={`tab-btn ${activeTab === "section" ? "active" : ""}`}
-          onClick={() => setActiveTab("section")}
+          onClick={() => handleTabChange("section")}
         >
           By Section
         </button>
         <button
           className={`tab-btn ${activeTab === "criteria" ? "active" : ""}`}
-          onClick={() => setActiveTab("criteria")}
+          onClick={() => handleTabChange("criteria")}
         >
           By Criteria
         </button>

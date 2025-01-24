@@ -10,11 +10,9 @@ from PyPDF2 import PdfReader
 from dotenv import load_dotenv
 from docx import Document
 
-
 app = FastAPI()
 load_dotenv()
 
-# 添加 CORS 中间件
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,16 +21,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 设置 OpenAI API 密钥
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  
 
-# 缓存结构，用于存储上传文件的中间结果
 uploaded_files_cache = {}
 
 
 def load_prompt(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
-        # return file.read()
         return file.read().strip()
 
 PROMPTS = {
@@ -146,14 +141,13 @@ async def generate_response(file: UploadFile = File(...)):
     try:
         print(f"Processing file for OpenAI response: {file.filename}, type: {file.content_type}")
 
-        # Save the uploaded file temporarily
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp_file:
             tmp_file.write(await file.read())
             tmp_file_path = tmp_file.name
 
         print("Loading document...")
         paragraphs = load_document(tmp_file_path)
-        os.remove(tmp_file_path)  # Clean up temporary file
+        os.remove(tmp_file_path) 
 
         print("Combining full document content...")
         content = combine_full_document(paragraphs)
@@ -171,7 +165,6 @@ async def generate_response(file: UploadFile = File(...)):
         print("\nGenerating overall assessment...")
         overall_review = generate_overall_review(content)
 
-        # Construct the response JSON
         response_json = {
             "criteria": reviews,
             "section_review": section_review,
@@ -191,7 +184,6 @@ async def convert_word_to_pdf(file: UploadFile):
     try:
         print(f"Converting Word to PDF: {file.filename}")
         with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_file:
-            # 保存上传的文件
             tmp_file.write(await file.read())
             tmp_file_path = tmp_file.name
 

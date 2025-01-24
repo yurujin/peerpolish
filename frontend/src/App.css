@@ -242,3 +242,18 @@ main {
 .criteria-aspect br {
   line-height: 1.5;
 }
+
+
+
+mark {
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+mark[style*="yellow"] {
+  background-color: yellow;
+}
+
+mark[style*="lightblue"] {
+  background-color: lightblue;
+}
