@@ -1,190 +1,108 @@
 import React, { useState, useEffect } from "react";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
-import "@react-pdf-viewer/core/lib/styles/index.css";
+import { searchPlugin } from "@react-pdf-viewer/search";
 import { zoomPlugin } from "@react-pdf-viewer/zoom";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/search/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
-import { highlightPlugin } from "@react-pdf-viewer/highlight";
-import "@react-pdf-viewer/highlight/lib/styles/index.css";
 import axios from "axios";
-
 import * as pdfjsLib from "pdfjs-dist";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
-
-
 
 function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, activeTab }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [notes, setNotes] = useState([]); 
-
+  const [searchText, setSearchText] = useState(""); // 用于高亮的原文句子
+  const [originalTextByPage, setOriginalTextByPage] = useState([]); // 存储每一页的原文文本
 
   const zoomPluginInstance = zoomPlugin();
   const { ZoomIn, ZoomOut, ZoomPopover } = zoomPluginInstance;
 
+  const searchPluginInstance = searchPlugin();
+  const { setTargetPages } = searchPluginInstance;
+
+  // 清理文本：去空格、去符号、转换为小写
   const sanitizeText = (text) =>
     text
       .replace(/\[\d+(,\s*\d+)*\]/g, "") // 移除引用标注，比如 [6], [12, 15]
       .replace(/[-–—\s]+/g, "") // 移除所有空格和连字符
-      .replace(/[.,?!;:"'()_\-{}<>~`@#$%^&*|/]/g, "") // 移除所有标点符号（移除了不必要的转义符）
+      .replace(/[.,?!;:"'()_\-{}<>~`@#$%^&*|/]/g, "") // 移除所有标点符号
       .toLowerCase(); // 转换为小写
 
-  
-const generateNotesFromReferences = async () => {
-    if (!pdfUrl || !highlightedReferences) return [];
-
-    const pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
-    const pdfTextByPage = [];
-
-    for (let i = 0; i < pdfDoc.numPages; i++) {
-        const page = await pdfDoc.getPage(i + 1);
-        const textContent = await page.getTextContent();
-        const viewport = page.getViewport({ scale: 1 });
-
-        const pageText = sanitizeText(
-            textContent.items.map((item) => item.str).join(" ")
-        );
-
-        pdfTextByPage.push({ pageIndex: i, text: pageText, viewport, textContent });
+  // 提取 PDF 的原文文本
+  const extractOriginalText = async () => {
+    if (!pdfUrl) {
+      console.warn("PDF URL is missing.");
+      return;
     }
 
-    const notes = highlightedReferences.map((ref, index) => {
-        const sanitizedRef = sanitizeText(ref.reference);
+    const pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
+    const textByPage = [];
 
-        for (const { pageIndex, text, viewport, textContent } of pdfTextByPage) {
-            const startIndex = text.indexOf(sanitizedRef);
-            if (startIndex !== -1) {
-                // 从文本内容中找到起始位置，计算高亮坐标
-                const items = textContent.items;
-                let charIndex = 0;
-                let highlightRect = null;
+    for (let i = 0; i < pdfDoc.numPages; i++) {
+      const page = await pdfDoc.getPage(i + 1);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items.map((item) => item.str).join(" ");
+      textByPage.push({ pageIndex: i, text: pageText });
+    }
 
-                for (const item of items) {
-                    const itemText = sanitizeText(item.str);
-                    if (charIndex + itemText.length > startIndex) {
-                        const left = item.transform[4];
-                        const top = viewport.height - item.transform[5];
-                        const width = viewport.width; // 可根据实际字符宽度计算
-                        const height = 10; // 可根据字体高度计算
+    setOriginalTextByPage(textByPage);
+  };
 
-                        highlightRect = { left, top, width, height };
-                        break;
-                    }
-                    charIndex += itemText.length;
-                }
+  // 匹配 reference 并返回原文句子
+  const matchReferences = () => {
+    if (!highlightedReferences || !originalTextByPage.length) {
+      console.warn("Highlighted references or original text is missing.");
+      return;
+    }
 
-                if (highlightRect) {
-                    return {
-                        id: `highlight-${index}`,
-                        content: ref.reference,
-                        highlightAreas: [
-                            {
-                                pageIndex,
-                                ...highlightRect,
-                            },
-                        ],
-                    };
-                }
-            }
+    let matchedSentences = [];
+
+    highlightedReferences.forEach((ref) => {
+      const sanitizedRef = sanitizeText(ref.reference);
+
+      originalTextByPage.forEach((page) => {
+        const sanitizedPageText = sanitizeText(page.text);
+        const startIndex = sanitizedPageText.indexOf(sanitizedRef);
+
+        if (startIndex !== -1) {
+          // 找到匹配的原文句子
+          const originalSentence = page.text.substring(
+            startIndex,
+            startIndex + ref.reference.length
+          );
+          matchedSentences.push(originalSentence);
         }
-
-        console.warn(`Reference "${ref.reference}" not found.`);
-        return null;
+      });
     });
 
-    return notes.filter(Boolean); // 移除未找到的引用
-};
+    // 将匹配的原文句子拼接成搜索文本
+    if (matchedSentences.length > 0) {
+      setSearchText(matchedSentences.join(" "));
+    }
+  };
 
-
-
-  // 动态生成高亮区域并更新状态
+  // 动态提取原文文本并匹配 reference
   useEffect(() => {
-    const updateNotes = async () => {
-      if (activeTab === "section" && highlightedReferences?.length > 0) {
-        const newNotes = await generateNotesFromReferences();
-        setNotes(newNotes);
-      } else {
-        setNotes([]);
+    const updateTextAndMatch = async () => {
+      if (activeTab === "section" && pdfUrl && highlightedReferences?.length > 0) {
+        await extractOriginalText();
+        matchReferences();
       }
     };
 
-    updateNotes();
-  }, [activeTab, highlightedReferences, pdfUrl]);
+    updateTextAndMatch();
+  }, [activeTab, pdfUrl, highlightedReferences]);
 
-
-
-
-  const renderHighlights = (props) => {
-    if (!Array.isArray(notes)) {
-        console.error("Notes is not an array:", notes);
-        return null;
-    }
-
-    return (
-        <div>
-            {notes.map((note) => (
-                <React.Fragment key={note.id}>
-                    {note.highlightAreas
-                        .filter((area) => area.pageIndex === props.pageIndex)
-                        .map((area, idx) => (
-                            <div
-                                key={idx}
-                                style={{
-                                    position: "absolute",
-                                    background: "yellow",
-                                    opacity: 0.4,
-                                    top: `${area.top}px`,
-                                    left: `${area.left}px`,
-                                    width: `${area.width}px`,
-                                    height: `${area.height}px`,
-                                }}
-                            />
-                        ))}
-                </React.Fragment>
-            ))}
-        </div>
-    );
-};
-
-  const highlightPluginInstance = highlightPlugin({
-    renderHighlights,
-  });
-
-  
-    
-  
-
-
-  // 动态生成高亮区域并更新状态
-  useEffect(() => {
-    const updateNotes = async () => {
-        if (activeTab === "section" && highlightedReferences?.length > 0) {
-            const newNotes = await generateNotesFromReferences();
-            if (Array.isArray(newNotes)) {
-                setNotes(newNotes);
-            } else {
-                console.error("Generated notes is not an array:", newNotes);
-                setNotes([]); // 默认清空
-            }
-        } else {
-            setNotes([]); // 清空高亮
-        }
-    };
-
-    updateNotes();
-}, [activeTab, highlightedReferences, pdfUrl]);
-
-  // File handling functions remain the same
+  // 文件上传逻辑
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
     onFileSelect(file);
     setError(null);
   };
-
-
-
 
   const handleUpload = async () => {
     if (!selectedFile) {
@@ -221,7 +139,6 @@ const generateNotesFromReferences = async () => {
     }
   };
 
-
   return (
     <section className="left-panel">
       <div className="upload-section">
@@ -247,13 +164,10 @@ const generateNotesFromReferences = async () => {
                 <ZoomPopover />
               </div>
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                <div style={{ height: '750px' }}>
+                <div style={{ height: "750px" }}>
                   <Viewer
                     fileUrl={pdfUrl}
-                    plugins={[
-                      zoomPluginInstance,
-                      highlightPluginInstance
-                    ]}
+                    plugins={[zoomPluginInstance, searchPluginInstance]}
                     defaultScale={1}
                   />
                 </div>
