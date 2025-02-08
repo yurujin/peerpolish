@@ -4,6 +4,8 @@ import RightPanel from "./components/RightPanel";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import "./App.css";
+import TestPage from "./testpage";
+
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null); // 保存选中的文件
@@ -12,6 +14,8 @@ function App() {
   const [activeTab, setActiveTab] = useState("overall"); // 当前激活的 Tab
   const [sectionData, setSectionData] = useState(null); // Section 数据
   const [criteriaData, setCriteriaData] = useState(null); // Criteria 数据
+
+  const [isTesting, setIsTesting] = useState(false);
 
   const handleFileSelect = (file) => {
     console.log("File selected in LeftPanel:", file); // 调试日志
@@ -42,6 +46,12 @@ function App() {
   return (
     <div>
       <Header />
+
+      <button onClick={() => setIsTesting(!isTesting)}>
+                {isTesting ? "return to main page" : "enter into test page"}
+      </button>
+      {isTesting ? <TestPage /> : <h1>main page</h1>}
+
       <main className="main-layout">
         {/* 将回调函数传递给 LeftPanel */}
         <LeftPanel

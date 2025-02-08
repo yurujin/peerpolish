@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
-import { searchPlugin } from "@react-pdf-viewer/search";
+import { highlightPlugin, RenderHighlightsProps } from "@react-pdf-viewer/highlight";
 import { zoomPlugin } from "@react-pdf-viewer/zoom";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/search/lib/styles/index.css";
+import "@react-pdf-viewer/highlight/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import axios from "axios";
 import * as pdfjsLib from "pdfjs-dist";
@@ -14,87 +14,116 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchText, setSearchText] = useState(""); // 用于高亮的原文句子
   const [originalTextByPage, setOriginalTextByPage] = useState([]); // 存储每一页的原文文本
+  const [highlights, setHighlights] = useState([]); // 存储高亮区域
 
   const zoomPluginInstance = zoomPlugin();
   const { ZoomIn, ZoomOut, ZoomPopover } = zoomPluginInstance;
 
-  const searchPluginInstance = searchPlugin();
-  const { setTargetPages } = searchPluginInstance;
+  const highlightPluginInstance = highlightPlugin();
+  const { jumpToHighlightArea } = highlightPluginInstance;
 
-  // 清理文本：去空格、去符号、转换为小写
-  const sanitizeText = (text) =>
-    text
-      .replace(/\[\d+(,\s*\d+)*\]/g, "") // 移除引用标注，比如 [6], [12, 15]
-      .replace(/[-–—\s]+/g, "") // 移除所有空格和连字符
-      .replace(/[.,?!;:"'()_\-{}<>~`@#$%^&*|/]/g, "") // 移除所有标点符号
-      .toLowerCase(); // 转换为小写
-
-  // 提取 PDF 的原文文本
   const extractOriginalText = async () => {
-    if (!pdfUrl) {
-      console.warn("PDF URL is missing.");
-      return;
-    }
+    if (!pdfUrl) return;
 
     const pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
-    const textByPage = [];
+    let rawTextArray = [];
 
     for (let i = 0; i < pdfDoc.numPages; i++) {
-      const page = await pdfDoc.getPage(i + 1);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items.map((item) => item.str).join(" ");
-      textByPage.push({ pageIndex: i, text: pageText });
+        const page = await pdfDoc.getPage(i + 1);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map((item) => item.str).join(" ");
+        rawTextArray.push({ pageIndex: i, text: pageText });
     }
 
-    setOriginalTextByPage(textByPage);
-  };
+    setOriginalTextByPage(rawTextArray);
+};
 
-  // 匹配 reference 并返回原文句子
-  const matchReferences = () => {
-    if (!highlightedReferences || !originalTextByPage.length) {
-      console.warn("Highlighted references or original text is missing.");
-      return;
-    }
+  // 计算高亮区域
+  const calculateHighlights = async () => {
+    if (!highlightedReferences.length || !pdfUrl) return;
 
-    let matchedSentences = [];
+    const pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
+    let foundHighlights = [];
 
-    highlightedReferences.forEach((ref) => {
-      const sanitizedRef = sanitizeText(ref.reference);
+    for (const ref of highlightedReferences) {
+        const fullSentence = ref.reference.trim();
+        const words = fullSentence.split(" ").map(word => word.replace(/[^\w]/g, "")); // 清理标点
+        if (words.length < 3) continue; // 确保有足够的词进行匹配
 
-      originalTextByPage.forEach((page) => {
-        const sanitizedPageText = sanitizeText(page.text);
-        const startIndex = sanitizedPageText.indexOf(sanitizedRef);
+        const firstThreeWords = words.slice(0, 3).join(" "); // 前三个词
+        const firstTwoWords = words.slice(0, 2).join(" "); // 前两个词
+        const secondThirdWords = words.slice(1, 3).join(" "); // 第 2、3 词
 
-        if (startIndex !== -1) {
-          // 找到匹配的原文句子
-          const originalSentence = page.text.substring(
-            startIndex,
-            startIndex + ref.reference.length
-          );
-          matchedSentences.push(originalSentence);
+        console.log(`🔍 目标句: "${fullSentence}"`);
+        console.log(`🔹 前三词: "${firstThreeWords}" | 前两词: "${firstTwoWords}" | 第2,3词: "${secondThirdWords}"`);
+
+        for (let pageIndex = 0; pageIndex < originalTextByPage.length; pageIndex++) {
+            const pageText = originalTextByPage[pageIndex].text;
+
+            if (pageText.includes(firstThreeWords) || pageText.includes(firstTwoWords) || pageText.includes(secondThirdWords)) {
+                console.log(`✅ 在第 ${pageIndex + 1} 页找到匹配！`);
+
+                const page = await pdfDoc.getPage(pageIndex + 1);
+                const textContent = await page.getTextContent();
+                const viewport = page.getViewport({ scale: 1 });
+
+                textContent.items.forEach((item) => {
+                    if (
+                        item.str.includes(firstThreeWords) ||
+                        item.str.includes(firstTwoWords) ||
+                        item.str.includes(secondThirdWords)
+                    ) {
+                        const { transform, width, height } = item;
+                        const x = transform[4];
+                        const y = viewport.height - transform[5] - height;
+
+                        const highlightArea = {
+                            pageIndex,
+                            left: (x / viewport.width) * 100,
+                            top: (y / viewport.height) * 100,
+                            width: (width / viewport.width) * 100,
+                            height: (height / viewport.height) * 100,
+                        };
+
+                        foundHighlights.push(highlightArea);
+                    }
+                });
+            }
         }
-      });
-    });
-
-    // 将匹配的原文句子拼接成搜索文本
-    if (matchedSentences.length > 0) {
-      setSearchText(matchedSentences.join(" "));
     }
-  };
 
-  // 动态提取原文文本并匹配 reference
-  useEffect(() => {
-    const updateTextAndMatch = async () => {
-      if (activeTab === "section" && pdfUrl && highlightedReferences?.length > 0) {
-        await extractOriginalText();
-        matchReferences();
-      }
-    };
+    setHighlights(foundHighlights);
+    console.log("🔆 高亮区域:", foundHighlights);
+};
 
-    updateTextAndMatch();
-  }, [activeTab, pdfUrl, highlightedReferences]);
+// 渲染高亮区域
+const renderHighlights = (props) => (
+    <div>
+        {highlights
+            .filter((area) => area.pageIndex === props.pageIndex)
+            .map((area, idx) => (
+                <div
+                    key={idx}
+                    style={Object.assign(
+                        {},
+                        { background: "yellow", opacity: 0.4 },
+                        props.getCssProperties(area, props.rotation)
+                    )}
+                />
+            ))}
+    </div>
+);
+
+// 监听 PDF 变化 & 提取文本
+useEffect(() => {
+    if (pdfUrl) extractOriginalText();
+}, [pdfUrl]);
+
+// 监听参考文献变化 & 触发匹配
+useEffect(() => {
+    if (highlightedReferences.length) calculateHighlights();
+}, [highlightedReferences]);
 
   // 文件上传逻辑
   const handleFileChange = (event) => {
@@ -167,7 +196,7 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
                 <div style={{ height: "750px" }}>
                   <Viewer
                     fileUrl={pdfUrl}
-                    plugins={[zoomPluginInstance, searchPluginInstance]}
+                    plugins={[zoomPluginInstance, highlightPluginInstance]}
                     defaultScale={1}
                   />
                 </div>

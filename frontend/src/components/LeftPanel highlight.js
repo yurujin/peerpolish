@@ -25,10 +25,10 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
 
   const sanitizeText = (text) =>
     text
-      .replace(/\[\d+(,\s*\d+)*\]/g, "") // 移除引用标注，比如 [6], [12, 15]
-      .replace(/[-–—\s]+/g, "") // 移除所有空格和连字符
-      .replace(/[.,?!;:"'()_\-{}<>~`@#$%^&*|/]/g, "") // 移除所有标点符号（移除了不必要的转义符）
-      .toLowerCase(); // 转换为小写
+      .replace(/\[\d+(,\s*\d+)*\]/g, "") 
+      .replace(/[-–—\s]+/g, "") 
+      .replace(/[.,?!;:"'()_\-{}<>~`@#$%^&*|/]/g, "") 
+      .toLowerCase(); 
 
   
       const generateNotesFromReferences = async () => {
@@ -42,7 +42,6 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
       
         const pdfTextByPage = [];
       
-        // 提取每一页的文本并构造字符数组
         for (let i = 0; i < pdfDoc.numPages; i++) {
           console.log(`Processing page ${i + 1}`);
           const page = await pdfDoc.getPage(i + 1);
@@ -110,7 +109,6 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
                 console.log(`Start char info:`, startChar);
                 console.log(`End char info:`, endChar);
       
-                // 动态计算高亮区域的宽度和高度
                 const width = Math.abs(endChar.left + endChar.width - startChar.left);
                 const height = Math.max(startChar.height, endChar.height);
       
@@ -143,7 +141,6 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
         return notes.filter(Boolean);
       };
       
-  // 动态生成高亮区域并更新状态
   useEffect(() => {
     const updateNotes = async () => {
         if (activeTab === "section" && pdfUrl && highlightedReferences?.length > 0) {
@@ -162,7 +159,7 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
 
 
 const renderHighlights = (props) => {
-  const { pageIndex, scale } = props; // 获取当前页面的缩放比例
+  const { pageIndex, scale } = props; 
   console.log("Current scale:", scale);
 
   const filteredNotes = notes.filter((note) =>
@@ -182,7 +179,6 @@ const renderHighlights = (props) => {
           {note.highlightAreas
             .filter((area) => area.pageIndex === pageIndex)
             .map((area, idx) => {
-              // 根据缩放比例调整高亮区域的坐标和尺寸
               const scaledLeft = area.left * scale;
               const scaledTop = area.top * scale;
               const scaledWidth = area.width * scale;
@@ -217,7 +213,6 @@ const renderHighlights = (props) => {
   );
 };
 
-  // 动态生成高亮区域并更新状态
   useEffect(() => {
     const updateNotes = async () => {
       if (activeTab === "section" && pdfUrl && highlightedReferences?.length > 0) {
@@ -237,7 +232,6 @@ const renderHighlights = (props) => {
     renderHighlights,
   });
 
-  // File handling functions remain the same
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
