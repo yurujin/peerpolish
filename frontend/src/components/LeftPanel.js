@@ -14,118 +14,143 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [originalTextByPage, setOriginalTextByPage] = useState([]); // 存储每一页的原文文本
-  const [highlights, setHighlights] = useState([]); // 存储高亮区域
+  const [highlights, setHighlights] = useState([]); 
+  
 
   const zoomPluginInstance = zoomPlugin();
   const { ZoomIn, ZoomOut, ZoomPopover } = zoomPluginInstance;
 
-  const highlightPluginInstance = highlightPlugin();
-  const { jumpToHighlightArea } = highlightPluginInstance;
 
-  const extractOriginalText = async () => {
-    if (!pdfUrl) return;
-
-    const pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
-    let rawTextArray = [];
-
-    for (let i = 0; i < pdfDoc.numPages; i++) {
-        const page = await pdfDoc.getPage(i + 1);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items.map((item) => item.str).join(" ");
-        rawTextArray.push({ pageIndex: i, text: pageText });
-    }
-
-    setOriginalTextByPage(rawTextArray);
-};
-
-  // 计算高亮区域
-  const calculateHighlights = async () => {
-    if (!highlightedReferences.length || !pdfUrl) return;
+  const calculateHighlights = async (pdfUrl, references) => {
+    if (!pdfUrl || !references || references.length === 0) return;
 
     const pdfDoc = await pdfjsLib.getDocument(pdfUrl).promise;
     let foundHighlights = [];
 
-    for (const ref of highlightedReferences) {
-        const fullSentence = ref.reference.trim();
-        const words = fullSentence.split(" ").map(word => word.replace(/[^\w]/g, "")); // 清理标点
-        if (words.length < 3) continue; // 确保有足够的词进行匹配
 
-        const firstThreeWords = words.slice(0, 3).join(" "); // 前三个词
-        const firstTwoWords = words.slice(0, 2).join(" "); // 前两个词
-        const secondThirdWords = words.slice(1, 3).join(" "); // 第 2、3 词
+    for (let pageIndex = 0; pageIndex < pdfDoc.numPages; pageIndex++) {
 
-        console.log(`🔍 目标句: "${fullSentence}"`);
-        console.log(`🔹 前三词: "${firstThreeWords}" | 前两词: "${firstTwoWords}" | 第2,3词: "${secondThirdWords}"`);
+      const page = await pdfDoc.getPage(pageIndex + 1);
+      const textContent = await page.getTextContent();
+      const viewport = page.getViewport({ scale: 1 });
 
-        for (let pageIndex = 0; pageIndex < originalTextByPage.length; pageIndex++) {
-            const pageText = originalTextByPage[pageIndex].text;
+      let fullText = "";
+      const itemRanges = [];
+      textContent.items.forEach((item, itemIndex) => {
+        itemRanges.push({
+          start: fullText.length,
+          end: fullText.length + item.str.length,
+          item,
+          itemIndex, 
+        });
+        fullText += item.str; 
+      });
 
-            if (pageText.includes(firstThreeWords) || pageText.includes(firstTwoWords) || pageText.includes(secondThirdWords)) {
-                console.log(`✅ 在第 ${pageIndex + 1} 页找到匹配！`);
 
-                const page = await pdfDoc.getPage(pageIndex + 1);
-                const textContent = await page.getTextContent();
-                const viewport = page.getViewport({ scale: 1 });
+      references.forEach((ref) => {
+        const cleanFullText = fullText.replace(/[^\w]/g, "");
+        const cleanSearchText = ref.reference.replace(/[^\w]/g, "");
 
-                textContent.items.forEach((item) => {
-                    if (
-                        item.str.includes(firstThreeWords) ||
-                        item.str.includes(firstTwoWords) ||
-                        item.str.includes(secondThirdWords)
-                    ) {
-                        const { transform, width, height } = item;
-                        const x = transform[4];
-                        const y = viewport.height - transform[5] - height;
 
-                        const highlightArea = {
-                            pageIndex,
-                            left: (x / viewport.width) * 100,
-                            top: (y / viewport.height) * 100,
-                            width: (width / viewport.width) * 100,
-                            height: (height / viewport.height) * 100,
-                        };
+        let matchStart = cleanFullText.indexOf(cleanSearchText);
+    
+        while (matchStart !== -1) {
+          const matchEnd = matchStart + cleanSearchText.length;
 
-                        foundHighlights.push(highlightArea);
-                    }
-                });
+          let originalStart = -1;
+          let originalEnd = -1;
+          let currentCleanIndex = 0;
+
+          for (let i = 0; i < fullText.length; i++) {
+            if (/[\w]/.test(fullText[i])) {  
+              if (currentCleanIndex === matchStart) {
+                originalStart = i;
+              }
+              if (currentCleanIndex === matchEnd - 1) {
+                originalEnd = i + 1;
+                break;
+              }
+              currentCleanIndex++;
             }
+          }
+
+
+
+          if (originalStart !== -1 && originalEnd !== -1) {
+
+            const matchingItems = itemRanges.filter(
+              (range) => range.end > originalStart && range.start < originalEnd
+            );
+
+            matchingItems.forEach((range) => {
+              const item = range.item;
+              const itemStart = Math.max(originalStart, range.start);
+              const itemEnd = Math.min(originalEnd, range.end);
+
+              const highlightStart = itemStart - range.start;
+              const highlightEnd = itemEnd - range.start;
+
+              const highlightWidth = (highlightEnd - highlightStart) / item.str.length * item.width;
+
+              const x = item.transform[4] + (highlightStart / item.str.length) * item.width;
+
+              const y = viewport.height - item.transform[5] - item.height;
+
+              const highlightArea = {
+                pageIndex,
+                left: (x / viewport.width) * 100,
+                top: (y / viewport.height) * 100,
+                width: (highlightWidth / viewport.width) * 100,
+                height: (item.height / viewport.height) * 100,
+              };
+
+
+              foundHighlights.push(highlightArea);
+            });
+          }
+
+          matchStart = cleanFullText.indexOf(cleanSearchText, matchEnd);
+
         }
+      });
     }
 
+
     setHighlights(foundHighlights);
-    console.log("🔆 高亮区域:", foundHighlights);
-};
+  };
 
-// 渲染高亮区域
-const renderHighlights = (props) => (
+  const renderHighlights = (props) => (
     <div>
-        {highlights
-            .filter((area) => area.pageIndex === props.pageIndex)
-            .map((area, idx) => (
-                <div
-                    key={idx}
-                    style={Object.assign(
-                        {},
-                        { background: "yellow", opacity: 0.4 },
-                        props.getCssProperties(area, props.rotation)
-                    )}
-                />
-            ))}
+      {highlights
+        .filter((area) => area.pageIndex === props.pageIndex)
+        .map((area, idx) => (
+          <div
+            key={idx}
+            style={Object.assign(
+              {},
+              {
+                background: "green",
+                opacity: 0.4,
+              },
+              props.getCssProperties(area, props.rotation)
+            )}
+          />
+        ))}
     </div>
-);
+  );
 
-// 监听 PDF 变化 & 提取文本
-useEffect(() => {
-    if (pdfUrl) extractOriginalText();
-}, [pdfUrl]);
+  const highlightPluginInstance = highlightPlugin({
+    renderHighlights,
+  });
 
-// 监听参考文献变化 & 触发匹配
-useEffect(() => {
-    if (highlightedReferences.length) calculateHighlights();
-}, [highlightedReferences]);
+  useEffect(() => {
+    if (activeTab === "section" && pdfUrl && highlightedReferences && highlightedReferences.length > 0) {
+      calculateHighlights(pdfUrl, highlightedReferences);
+    } else {
+      setHighlights([]); 
+    }
+  }, [pdfUrl, highlightedReferences]);
 
-  // 文件上传逻辑
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);

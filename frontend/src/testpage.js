@@ -64,9 +64,9 @@ const TestPage = () => {
             console.log("完整文本:", fullText);
             console.log("item 范围:", itemRanges);
     
-            // 去掉 fullText 和 searchText 中的空格
-            const cleanFullText = fullText.replace(/\s+/g, "");
-            const cleanSearchText = searchText.replace(/\s+/g, "");
+            // **去掉所有标点符号和空格**
+            const cleanFullText = fullText.replace(/[\s.,'"\-–—!?;:(){}\[\]<>_*&^%$#@+=\\|`~]/g, ""); 
+            const cleanSearchText = searchText.replace(/[\s.,'"\-–—!?;:(){}\[\]<>_*&^%$#@+=\\|`~]/g, "");
             console.log("去掉空格后的完整文本:", cleanFullText);
             console.log("去掉空格后的搜索文本:", cleanSearchText);
     
@@ -84,7 +84,7 @@ const TestPage = () => {
                 let currentCleanIndex = 0;
     
                 for (let i = 0; i < fullText.length; i++) {
-                    if (/\S/.test(fullText[i])) { // 如果不是空格
+                    if (/[a-zA-Z0-9]/.test(fullText[i])) { // 如果不是空格
                         if (currentCleanIndex === matchStart) {
                             originalStart = i;
                         }
@@ -160,7 +160,7 @@ const TestPage = () => {
         console.log("所有高亮区域:", foundHighlights);
         setHighlights(foundHighlights);
     };
-    
+
     // Render the highlights
     const renderHighlights = (props) => (
         <div>

@@ -10,52 +10,77 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
   const handleGenerateResponse = async () => {
     console.log("File passed to RightPanel:", file);
     if (!file) {
-      setError("No file selected for generating response.");
-      return;
+        setError("No file selected for generating response.");
+        return;
     }
-  
+
     setLoading(true);
     setError(null);
     setResponses(null);
-  
+
     try {
-      const aiResponses = await generateAIResponse(file);
-      console.log("AI Responses received:", aiResponses);
-  
-      let parsedSectionReview = null;
-      try {
-        const match = aiResponses.sectionReview.match(/```json\n([\s\S]*?)```/);
-        if (match && match[1]) {
-          parsedSectionReview = JSON.parse(match[1]);
+        const aiResponses = await generateAIResponse(file);
+        console.log("AI Responses received:", aiResponses);
+
+        let parsedSectionReview = null;
+
+        // **检查 sectionReview 是否存在**
+        if (!aiResponses.sectionReview) {
+            console.error("❌ sectionReview is missing:", aiResponses.sectionReview);
+            setError("Missing section review in AI response.");
+            return;
         }
-        console.log("Parsed Section Review:", parsedSectionReview);
-      } catch (err) {
-        console.error("Failed to parse section review:", err);
-      }
-  
-      setResponses({
-        ...aiResponses,
-        sectionReview: parsedSectionReview ? parsedSectionReview.section_review : null,
-      });
-  
-      // 提取引用和位置信息
-      const references = parsedSectionReview
-        ? parsedSectionReview.section_review.map((item, index) => ({
+
+        console.log("Raw sectionReview:", aiResponses.sectionReview);
+
+        // **去掉 Markdown 代码块**
+        let jsonString = aiResponses.sectionReview.trim();
+        const match = jsonString.match(/```json\n([\s\S]*?)```/);
+        if (match && match[1]) {
+            jsonString = match[1]; // 提取 JSON 代码
+        }
+
+        // **解析 JSON**
+        try {
+            parsedSectionReview = JSON.parse(jsonString);
+            console.log("✅ Parsed Section Review:", parsedSectionReview);
+        } catch (err) {
+            console.error("❌ Failed to parse JSON:", err);
+            setError("Invalid JSON format in AI response.");
+            return;
+        }
+
+        // **检查 section_review 是否是数组**
+        const sectionData = parsedSectionReview?.section_review || [];
+        if (!Array.isArray(sectionData)) {
+            console.error("❌ section_review is not an array:", sectionData);
+            setError("Invalid section review format.");
+            return;
+        }
+
+        // **更新 state**
+        setResponses({
+            ...aiResponses,
+            sectionReview: sectionData,
+        });
+
+        // **提取引用和位置信息**
+        const references = sectionData.map((item, index) => ({
             reference: item.reference,
             id: index,
-            position: item.position, // 添加 position 数据
-          }))
-        : [];
-      onSetHighlightedReferences(references);
-  
-      onSetData(parsedSectionReview?.section_review, aiResponses.criteria); // 保存 Section 和 Criteria 数据
+            position: item.position,
+        }));
+        onSetHighlightedReferences(references);
+
+        onSetData(sectionData, aiResponses.criteria); // 保存 Section 和 Criteria 数据
     } catch (err) {
-      console.error("Error generating AI response:", err);
-      setError("Failed to generate AI response.");
+        console.error("❌ Error generating AI response:", err);
+        setError("Failed to generate AI response.");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
   
 
   const handleTabChange = (tab) => {
