@@ -10,6 +10,12 @@
    - Objective: Critically evaluate the "Novelty or Originality" of a research paper, assessing its contribution to advancing knowledge in an innovative way.
 
 ### Review Guidelines
+   - Original Text Extraction Rules:
+      1. References must be direct quotes from the manuscript
+      2. Preserve original wording, punctuation and capitalization
+      3. Minimum quote length: Full independent clause
+      4. Prohibited: Paraphrasing, summarization, or fragmentary text
+
    - Critique Requirements:
       1.Provide a concise, specific, and actionable critique of the paper.
       2.Reference specific sections, sentences, or phrases to support the evaluation.
@@ -18,7 +24,7 @@
 
    - Examples:
       Instead of saying, "The methodology needs improvement," specify:
-      "In Section 3.1, the description of the data collection process lacks detail. Please include information on the sampling criteria and justification for the sample size."
+      "The methodology claims novelty in blockchain implementation (incremental innovation) but fails to differentiate from prior work by Liu et al. (2022). Specifically clarify: (1) Unique node configuration parameters (2) Enhanced consensus mechanism features (3) Throughput optimization strategies"
 
       Instead of saying, "The paper's contributions are unclear," specify:
       "The novelty of the proposed framework in Section 4.2 could be better articulated by explicitly comparing it to existing frameworks cited in Table 2."
@@ -42,7 +48,7 @@
 
 
 ### Expected Output
-   - Structure:Please strictly follow the following structure to generate response, don’t change any structure or word of the format.
+   - Structure: Please strictly follow the following structure to generate response, don’t change any structure or word of the format.
    {
       "criteria": [
          {

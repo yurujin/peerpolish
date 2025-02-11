@@ -65,8 +65,8 @@ const TestPage = () => {
             console.log("item 范围:", itemRanges);
     
             // **去掉所有标点符号和空格**
-            const cleanFullText = fullText.replace(/[\s.,'"\-–—!?;:(){}\[\]<>_*&^%$#@+=\\|`~]/g, ""); 
-            const cleanSearchText = searchText.replace(/[\s.,'"\-–—!?;:(){}\[\]<>_*&^%$#@+=\\|`~]/g, "");
+            const cleanFullText = fullText.replace(/[^\w]/g, ""); 
+            const cleanSearchText = searchText.replace(/[^\w]/g, "");
             console.log("去掉空格后的完整文本:", cleanFullText);
             console.log("去掉空格后的搜索文本:", cleanSearchText);
     

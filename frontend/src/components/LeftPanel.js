@@ -129,7 +129,7 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
             style={Object.assign(
               {},
               {
-                background: "green",
+                background: activeTab === "section" ? "green" : "#3B82F6",
                 opacity: 0.4,
               },
               props.getCssProperties(area, props.rotation)
@@ -144,12 +144,17 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
   });
 
   useEffect(() => {
-    if (activeTab === "section" && pdfUrl && highlightedReferences && highlightedReferences.length > 0) {
+    if (
+      (activeTab === "section" || activeTab === "criteria") && 
+      pdfUrl &&
+      highlightedReferences &&
+      highlightedReferences.length > 0
+    ) {
       calculateHighlights(pdfUrl, highlightedReferences);
     } else {
       setHighlights([]); 
     }
-  }, [pdfUrl, highlightedReferences]);
+  }, [pdfUrl, highlightedReferences, activeTab]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];

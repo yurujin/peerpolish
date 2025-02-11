@@ -58,45 +58,88 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
             return;
         }
 
-        // **更新 state**
-        setResponses({
-            ...aiResponses,
-            sectionReview: sectionData,
-        });
-
-        // **提取引用和位置信息**
-        const references = sectionData.map((item, index) => ({
-            reference: item.reference,
-            id: index,
-            position: item.position,
-        }));
-        onSetHighlightedReferences(references);
-
-        onSetData(sectionData, aiResponses.criteria); // 保存 Section 和 Criteria 数据
-    } catch (err) {
-        console.error("❌ Error generating AI response:", err);
-        setError("Failed to generate AI response.");
-    } finally {
-        setLoading(false);
+        // ====================== 解析 Criteria Data ======================
+    const criteriaReferences = [];
+    if (aiResponses.criteria) {
+      Object.keys(aiResponses.criteria).forEach((categoryName) => {
+        try {
+          const parsedCategory = JSON.parse(aiResponses.criteria[categoryName]);
+          parsedCategory.criteria.forEach((criterion) => {
+            criterion.recommendations.forEach((rec) => {
+              criteriaReferences.push({
+                reference: rec.reference,
+                id: `${categoryName}-${criterion.aspect}-${rec.recommendation.slice(0, 10)}`, // 生成唯一 ID
+              });
+            });
+          });
+        } catch (err) {
+          console.error(`Failed to parse ${categoryName}:`, err);
+        }
+      });
     }
+
+    // ====================== 更新状态 ======================
+    setResponses({
+      ...aiResponses,
+      sectionReview: sectionData,
+      criteria: aiResponses.criteria,
+    });
+
+    // 传递所有引用（Section + Criteria）
+    onSetHighlightedReferences([
+      ...sectionData.map((item, index) => ({
+        reference: item.reference,
+        id: `section-${index}`,
+        position: item.position,
+      })),
+      ...criteriaReferences,
+    ]);
+
+  } catch (err) {
+    console.error("❌ Error generating AI response:", err);
+    setError("Failed to generate AI response.");
+  } finally {
+    setLoading(false);
+  }
 };
 
+
   
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    onSetActiveTab(tab);
-  
-    if (tab === "section" && responses?.sectionReview) {
-      const references = responses.sectionReview.map((item, index) => ({
-        reference: item.reference,
-        id: index,
-        position: item.position, // 添加 position 数据
-      }));
-      onSetHighlightedReferences(references); // 更新引用
-    }
-  };
-  
+const handleTabChange = (tab) => {
+  setActiveTab(tab);
+  onSetActiveTab(tab);
+
+  // 根据 Tab 类型过滤引用
+  if (tab === "section" && responses?.sectionReview) {
+    const sectionRefs = responses.sectionReview.map((item, index) => ({
+      reference: item.reference,
+      id: `section-${index}`,
+      position: item.position,
+    }));
+    onSetHighlightedReferences(sectionRefs);
+  } else if (tab === "criteria" && responses?.criteria) {
+    const criteriaRefs = [];
+    Object.keys(responses.criteria).forEach((categoryName) => {
+      try {
+        const parsedCategory = JSON.parse(responses.criteria[categoryName]);
+        parsedCategory.criteria.forEach((criterion) => {
+          criterion.recommendations.forEach((rec) => {
+            criteriaRefs.push({
+              reference: rec.reference,
+              id: `${categoryName}-${criterion.aspect}-${rec.recommendation.slice(0, 10)}`,
+            });
+          });
+        });
+      } catch (err) {
+        console.error(`Failed to parse ${categoryName}:`, err);
+      }
+    });
+    onSetHighlightedReferences(criteriaRefs);
+  }else if (tab === "overall") {
+    onSetHighlightedReferences([]); 
+  }
+};  
 
   const renderSection = (sections) => {
     if (!sections || !Array.isArray(sections)) {
@@ -122,23 +165,75 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
     ));
   };
 
-  const renderCriteria = (criteria) => {
-    if (!criteria || typeof criteria !== "object") {
+  const renderCriteria = (criteriaData) => {
+    if (!criteriaData || typeof criteriaData !== "object") {
       return <p>No criteria review available.</p>;
     }
-
-    return Object.keys(criteria).map((aspect) => (
-      <div key={aspect} className="criteria-aspect">
-        <h3>{aspect}</h3>
-        <div>
-          {criteria[aspect]
-            .split("\n")
-            .map((line, index) => (
-              <p key={index}>{line}</p>
+  
+    return Object.keys(criteriaData).map((categoryName) => {
+      const categoryJsonString = criteriaData[categoryName];
+      let parsedCategory;
+  
+      try {
+        parsedCategory = JSON.parse(categoryJsonString);
+      } catch (err) {
+        console.error(`Failed to parse ${categoryName}:`, err);
+        return (
+          <div key={categoryName} style={{ marginBottom: "40px" }}>
+            <h2 style={{ color: "blue" }}>{categoryName}</h2>
+            <p>Invalid data format for this category.</p>
+          </div>
+        );
+      }
+  
+      const { criteria = [], overallComment } = parsedCategory;
+  
+      return (
+        <div key={categoryName} style={{ marginBottom: "40px" }}>
+          {/* 大类标题（蓝色） */}
+          <h2 style={{ color: "#2c3e72", borderBottom: "2px solid #ccc", paddingBottom: "8px" }}>
+            {categoryName}
+          </h2>
+  
+          {/* 具体评审标准（不显示 "Criteria Details" 标题） */}
+          <div style={{ marginTop: "20px" }}>
+            {criteria.map((criterion, idx) => (
+              <div key={idx} style={{ marginBottom: "25px", padding: "15px", backgroundColor: "#f8f9fa" }}>
+                {/* 具体标准标题 */}
+                <h4 style={{ color: "#2c3e50", marginBottom: "10px" }}>{criterion.aspect}</h4>
+                <ul style={{ listStyle: "none", paddingLeft: "0" }}>
+                  {criterion.recommendations?.map((rec, recIdx) => (
+                    <li key={recIdx} style={{ marginBottom: "15px" }}>
+                      <div style={{ fontWeight: "600", color: "#2980b9" }}>
+                        Recommendation:
+                      </div>
+                      <div style={{ marginBottom: "8px" }}>{rec.recommendation}</div>
+                      <div style={{ fontWeight: "600", color: "#27ae60" }}>
+                        Reference:
+                      </div>
+                      <div>{rec.reference}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
+          </div>
+  
+          {/* 总体评论 */}
+          <div style={{ marginTop: "30px" }}>
+            <h3 style={{ color: "#333", marginBottom: "15px" }}>Overall Comment</h3>
+            <p style={{ lineHeight: "1.6", color: "#555" }}>
+              {overallComment?.summary || "No summary available."}
+            </p>
+            <ul style={{ paddingLeft: "20px", color: "#555" }}>
+              {overallComment?.recommendations?.map((rec, idx) => (
+                <li key={idx} style={{ marginBottom: "8px" }}>{rec}</li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
-    ));
+      );
+    });
   };
 
   const renderOverall = (content) => {

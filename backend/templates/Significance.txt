@@ -10,6 +10,12 @@
    - Objective: Critically evaluate the " Significance or Importance " of a research paper, assessing paper's contribution to the body of knowledge and its potential impact on understanding or practice.
 
 ### Review Guidelines
+   - Original Text Extraction Rules:
+      1. References must be direct quotes from the manuscript
+      2. Preserve original wording, punctuation and capitalization
+      3. Minimum quote length: Full independent clause
+      4. Prohibited: Paraphrasing, summarization, or fragmentary text
+
    - Critique Requirements:
       1.Provide a concise, specific, and actionable critique of the paper.
       2.Reference specific sections, sentences, or phrases to support the evaluation.
@@ -18,7 +24,7 @@
 
    - Examples:
       Instead of saying, "The methodology needs improvement," specify:
-      "In Section 3.1, the description of the data collection process lacks detail. Please include information on the sampling criteria and justification for the sample size."
+      "The methodology claims novelty in blockchain implementation (incremental innovation) but fails to differentiate from prior work by Liu et al. (2022). Specifically clarify: (1) Unique node configuration parameters (2) Enhanced consensus mechanism features (3) Throughput optimization strategies"
 
       Instead of saying, "The paper's contributions are unclear," specify:
       "The novelty of the proposed framework in Section 4.2 could be better articulated by explicitly comparing it to existing frameworks cited in Table 2."
@@ -43,20 +49,20 @@
 
 
 ### Expected Output
-### Expected Output
-   - Structure:
+
+   - Structure: Please strictly follow the following structure to generate response, don’t change any structure or word of the format.
       {
       "criteria": [
          {
             "aspect": "Theoretical Contribution",
             "recommendations": [
             {
-               "recommendation": "Provide a clearer explanation of the proposed model in Section 4.3 and its relevance to existing theories.",
-               "reference": "Section 4.3: 'The proposed model builds upon existing theories but lacks explicit differentiation from previous frameworks.'"
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
             },
             {
-               "recommendation": "Expand on the implications of the theoretical model discussed in Section 5.",
-               "reference": "Section 5: 'Theoretical implications are briefly mentioned but not elaborated upon.'"
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
             }
             ]
          },
@@ -64,8 +70,8 @@
             "aspect": "Practical Applicability",
             "recommendations": [
             {
-               "recommendation": "Clarify the real-world scenarios where the findings can be applied, as outlined in Section 6.2.",
-               "reference": "Section 6.2: 'The study claims applicability in customer interaction systems without providing specific use cases.'"
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
             }
             ]
          },
@@ -73,8 +79,8 @@
             "aspect": "Future Research Guidance",
             "recommendations": [
             {
-               "recommendation": "Propose additional research directions based on the limitations highlighted in Section 7.",
-               "reference": "Section 7: 'The study acknowledges limitations but does not outline specific future research directions.'"
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
             }
             ]
          },
@@ -82,17 +88,16 @@
             "aspect": "Knowledge Contribution",
             "recommendations": [
             {
-               "recommendation": "Provide more depth in Section 3.2 by explicitly linking the findings to gaps identified in prior literature.",
-               "reference": "Section 3.2: 'The connection to prior research is briefly mentioned but lacks in-depth discussion.'"
+               "recommendation": "Describe your recommendation here.",
+               "reference": "Include the relevant original text from the manuscript here."
             }
             ]
          }
       ],
       "overallComment": {
-         "summary": "The paper presents a significant contribution to theoretical development and practical applications, but certain areas, such as implications and future research directions, require more depth.",
+         "summary":"Summarize the overall significance and importance of the paper here.",
          "recommendations": [
-            "Expand the discussion on theoretical implications in Section 5.",
-            "Provide specific real-world use cases to demonstrate practical applicability in Section 6.2."
+            "Provide specific and actionable overall recommendations here."
          ]
       }
       }
