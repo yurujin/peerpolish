@@ -23,6 +23,16 @@ app.add_middleware(
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  
 
+@app.get("/")
+def read_root():
+    return {"message": "Hello from FastAPI!"}
+
+# 绑定 0.0.0.0 并读取 Render 提供的 PORT
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 10000))  # 默认 10000，Render 会提供一个端口
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
 uploaded_files_cache = {}
 
 

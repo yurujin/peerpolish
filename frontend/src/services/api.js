@@ -1,25 +1,23 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = process.env.REACT_APP_BACKEND_URL || "http://127.0.0.1:8000";
+console.log("Backend API URL:", process.env.REACT_APP_BACKEND_URL);
 
-// 上传文件并返回 PDF 下载链接
+
 export const uploadFile = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-        // 设置 responseType 为 'blob'
         const response = await axios.post(`${API_URL}/upload/`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
-            responseType: "blob", // 重要，返回二进制流
+            responseType: "blob", 
         });
 
-        // 将二进制流转换为 Blob 对象
         const pdfBlob = new Blob([response.data], { type: "application/pdf" });
 
-        // 生成可下载的 URL
         const pdfUrl = URL.createObjectURL(pdfBlob);
-        console.log("Generated PDF URL:", pdfUrl); // 检查生成的 URL
+        console.log("Generated PDF URL:", pdfUrl); 
         return pdfUrl;
 
     } catch (error) {
@@ -28,9 +26,8 @@ export const uploadFile = async (file) => {
     }
 };
 
-// 生成 AI 响应并返回处理结果
 export const generateAIResponse = async (file) => {
-    console.log("Preparing to send API request with file:", file); // 确保文件信息正确
+    console.log("Preparing to send API request with file:", file); 
     const formData = new FormData();
     formData.append("file", file);
 
@@ -39,8 +36,7 @@ export const generateAIResponse = async (file) => {
             headers: { "Content-Type": "multipart/form-data" },
         });
 
-        console.log("API Response received:", response.data); // 确保响应数据正确
-        // 根据后端返回的数据结构，提取需要的部分
+        console.log("API Response received:", response.data); 
         return {
             criteria: response.data.criteria,
             sectionReview: response.data.section_review,
