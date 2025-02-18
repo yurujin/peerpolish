@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useRef} from "react";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import { highlightPlugin, RenderHighlightsProps } from "@react-pdf-viewer/highlight";
 import { zoomPlugin } from "@react-pdf-viewer/zoom";
@@ -10,15 +10,20 @@ import * as pdfjsLib from "pdfjs-dist";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
 
-function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, activeTab }) {
+function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, jumpTarget,activeTab }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [highlights, setHighlights] = useState([]); 
+
   
 
   const zoomPluginInstance = zoomPlugin();
   const { ZoomIn, ZoomOut, ZoomPopover } = zoomPluginInstance;
+
+  const jumpToHighlightAreaRef = useRef(() => {});
+  const [cachedHighlights, setCachedHighlights] = useState([]);
+
 
 
   const calculateHighlights = async (pdfUrl, references) => {
@@ -48,8 +53,12 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
 
 
       references.forEach((ref) => {
-        const cleanFullText = fullText.replace(/[^\w]/g, "");
-        const cleanSearchText = ref.reference.replace(/[^\w]/g, "");
+        const cleanFullText = fullText
+          .replace(/[^a-zA-Z]/g, "") // 移除所有非单词字符
+          .toLowerCase();        // 转换为全小写
+          const cleanSearchText = ref.reference
+          .replace(/[^a-zA-Z]/g, '') // 移除非字母字符
+          .toLowerCase();
 
 
         let matchStart = cleanFullText.indexOf(cleanSearchText);
@@ -62,7 +71,7 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
           let currentCleanIndex = 0;
 
           for (let i = 0; i < fullText.length; i++) {
-            if (/[\w]/.test(fullText[i])) {  
+            if (/[a-zA-Z]/.test(fullText[i])) {  
               if (currentCleanIndex === matchStart) {
                 originalStart = i;
               }
@@ -105,7 +114,10 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
               };
 
 
-              foundHighlights.push(highlightArea);
+              foundHighlights.push({
+                ...highlightArea,
+                referenceText: ref.reference, // 添加参考文本
+              });
             });
           }
 
@@ -117,9 +129,12 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
 
 
     setHighlights(foundHighlights);
+    setCachedHighlights(foundHighlights); 
+    console.log("Cached highlights updated:", foundHighlights);
   };
 
   const renderHighlights = (props) => (
+    
     <div>
       {highlights
         .filter((area) => area.pageIndex === props.pageIndex)
@@ -139,9 +154,10 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
     </div>
   );
 
-  const highlightPluginInstance = highlightPlugin({
-    renderHighlights,
-  });
+  const highlightPluginInstance = highlightPlugin({ renderHighlights });
+  jumpToHighlightAreaRef.current = highlightPluginInstance.jumpToHighlightArea;
+  
+
 
   useEffect(() => {
     if (
@@ -155,6 +171,33 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
       setHighlights([]); 
     }
   }, [pdfUrl, highlightedReferences, activeTab]);
+
+  useEffect(() => {
+    if (!jumpTarget  || cachedHighlights.length === 0) {
+      console.log("跳转条件不满足:", { jumpTarget,  cachedHighlights });
+      return;
+    }
+  
+    console.log("开始处理跳转:", jumpTarget);
+    
+    // 精确匹配逻辑
+    const target = cachedHighlights.find(h => 
+      h.referenceText.trim() === jumpTarget.trim()
+    );
+  
+    if (target) {
+      console.log("找到匹配高亮区域:", target);
+      
+      // 确保目标页面已加载
+
+        jumpToHighlightAreaRef.current(target);
+        
+
+    } else {
+      console.warn("未找到匹配的高亮区域");
+      console.log("当前缓存的高亮数据:", cachedHighlights);
+    }
+  }, [jumpTarget, cachedHighlights]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];

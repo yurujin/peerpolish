@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { generateAIResponse } from "../services/api";
 
-function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetData }) {
+function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetData ,onJumpToReference}) {
   const [responses, setResponses] = useState(null);
   const [activeTab, setActiveTab] = useState("overall");
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,6 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
 
         let parsedSectionReview = null;
 
-        // **检查 sectionReview 是否存在**
         if (!aiResponses.sectionReview) {
             console.error("❌ sectionReview is missing:", aiResponses.sectionReview);
             setError("Missing section review in AI response.");
@@ -33,14 +32,12 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
 
         console.log("Raw sectionReview:", aiResponses.sectionReview);
 
-        // **去掉 Markdown 代码块**
         let jsonString = aiResponses.sectionReview.trim();
         const match = jsonString.match(/```json\n([\s\S]*?)```/);
         if (match && match[1]) {
-            jsonString = match[1]; // 提取 JSON 代码
+            jsonString = match[1]; 
         }
 
-        // **解析 JSON**
         try {
             parsedSectionReview = JSON.parse(jsonString);
             console.log("✅ Parsed Section Review:", parsedSectionReview);
@@ -50,7 +47,6 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
             return;
         }
 
-        // **检查 section_review 是否是数组**
         const sectionData = parsedSectionReview?.section_review || [];
         if (!Array.isArray(sectionData)) {
             console.error("❌ section_review is not an array:", sectionData);
@@ -58,7 +54,6 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
             return;
         }
 
-        // ====================== 解析 Criteria Data ======================
     const criteriaReferences = [];
     if (aiResponses.criteria) {
       Object.keys(aiResponses.criteria).forEach((categoryName) => {
@@ -78,14 +73,12 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
       });
     }
 
-    // ====================== 更新状态 ======================
     setResponses({
       ...aiResponses,
       sectionReview: sectionData,
       criteria: aiResponses.criteria,
     });
 
-    // 传递所有引用（Section + Criteria）
     onSetHighlightedReferences([
       ...sectionData.map((item, index) => ({
         reference: item.reference,
@@ -110,7 +103,6 @@ const handleTabChange = (tab) => {
   setActiveTab(tab);
   onSetActiveTab(tab);
 
-  // 根据 Tab 类型过滤引用
   if (tab === "section" && responses?.sectionReview) {
     const sectionRefs = responses.sectionReview.map((item, index) => ({
       reference: item.reference,
@@ -152,15 +144,40 @@ const handleTabChange = (tab) => {
         <p>
           <strong>Critique:</strong> {item.critique}
         </p>
-        <p>
-          <strong>Recommendation:</strong>{" "}
-          <span
-            onClick={() => console.log(`Jump to reference ID: ${index}`)}
-            style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
-          >
-            {item.recommendation}
-          </span>
-        </p>
+        <div style={{ marginTop: '0.8rem' }}>
+        <strong>Reference:</strong>
+        <div
+          onClick={() => onJumpToReference(item.reference)}
+          style={{
+            display: 'inline-block',
+            position: 'relative',
+            color: '#3b82f6', // 品牌蓝色
+            padding: '4px 8px',
+            borderRadius: '4px',
+            backgroundColor: 'rgba(59, 130, 246, 0.05)',
+            transition: 'all 0.2s',
+            '&:hover': {
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+            },
+            '&:active': {
+              transform: 'scale(0.98)'
+            }
+          }}
+        >
+          {item.reference}
+          {/* 底部装饰线 */}
+          <div style={{
+            position: 'absolute',
+            bottom: '-2px',
+            left: 0,
+            right: 0,
+            height: '1px',
+            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+            transition: 'all 0.2s'
+          }} />
+        </div>
+      </div>
       </div>
     ));
   };
@@ -208,10 +225,57 @@ const handleTabChange = (tab) => {
                         Recommendation:
                       </div>
                       <div style={{ marginBottom: "8px" }}>{rec.recommendation}</div>
-                      <div style={{ fontWeight: "600", color: "#27ae60" }}>
-                        Reference:
-                      </div>
-                      <div>{rec.reference}</div>
+                      <div style={{ 
+                    marginTop: "10px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
+                  }}>
+                    <span style={{
+                      color: "#16a34a", // 保持绿色标签
+                      fontWeight: "600",
+                    }}>Reference:</span>
+                    
+                    <div
+                      onClick={() => onJumpToReference(rec.reference)}
+                      style={{
+                        cursor: "pointer",
+                        color: "#2563eb", // 蓝色文字
+                        padding: "6px 12px",
+                        borderRadius: "4px",
+                        backgroundColor: "rgba(37, 99, 235, 0.05)",
+                        border: "1px solid rgba(37, 99, 235, 0.1)",
+                        transition: "all 0.2s",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        "&:hover": {
+                          backgroundColor: "rgba(37, 99, 235, 0.1)",
+                          borderColor: "rgba(37, 99, 235, 0.3)",
+                          transform: "translateX(3px)"
+                        }
+                      }}
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        style={{ flexShrink: 0 }}
+                      >
+                        <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                      </svg>
+                      <span style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "400px"
+                      }}>
+                        {rec.reference}
+                      </span>
+                    </div>
+                  </div>
                     </li>
                   ))}
                 </ul>
