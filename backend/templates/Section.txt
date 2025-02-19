@@ -29,10 +29,10 @@ Return the critique and recommendations for each section of the manuscript in th
   {
     "section_review": [
       {
-        "section": "Abstract",
-        "critique": "The abstract does not clearly define the research objectives, making it difficult for readers to grasp the study's intent.",
-        "recommendation": "Clearly specify the research objectives and significance in the first two sentences of the abstract.",
-        "reference": "This study addresses several critical challenges in system design."
+        "section": "The section you defined from original script.",
+        "critique": "The section does not clearly define the research objectives, making it difficult for readers to grasp the study's intent.",
+        "recommendation": "Clearly specify the research objectives and significance in the first two sentences of thesection.",
+        "reference": "Original text extracted from script."
         "position": {
           "pageIndex": 0,
           "top": 5,
@@ -42,10 +42,10 @@ Return the critique and recommendations for each section of the manuscript in th
         }
       },
       {
-        "section": "Introduction",
-        "critique": "The introduction effectively sets the stage for the research but lacks a clear explanation of the research gap and the specific contributions of the study.",
-        "recommendation": "Elaborate on the research gap by discussing existing literature in more detail and clearly state how this study addresses that gap.",
-        "reference": "The research currently lacks an overview of what the blockchain implies for consumers."
+         "section": "The section you defined from original script.",
+        "critique": "The section does not clearly define the research objectives, making it difficult for readers to grasp the study's intent.",
+        "recommendation": "Clearly specify the research objectives and significance in the first two sentences of thesection.",
+        "reference": "Original text extracted from script."
         "position": {
           "pageIndex": 0,
           "top": 5,
@@ -53,21 +53,6 @@ Return the critique and recommendations for each section of the manuscript in th
           "height": 2,
           "width": 80
         }
-
-      },
-      {
-        "section": "Methodology",
-        "critique": "The methodology section provides a detailed account of the literature review process but lacks clarity on the interview process and how the data from interviews were analyzed.",
-        "recommendation": "Include a more detailed description of the interview process, including the selection criteria for experts and the method of data analysis.",
-        "reference": "To ensure correctness and validity of the collected results and categorization of the blockchain application areas, semi-structured interviews with three blockchain experts were conducted."
-        "position": {
-          "pageIndex": 0,
-          "top": 5,
-          "left": 10,
-          "height": 2,
-          "width": 80
-        }
-
       }
       // Add sections dynamically based on the manuscript structure.
     ],
