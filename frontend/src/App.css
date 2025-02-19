@@ -128,8 +128,10 @@ main {
   background-color: #0056b3;
 }
 
+body {
+  font-family: Arial, sans-serif;
+}
 
-/* Right Panel */
 .right-panel {
   width: 60%;
   background: #f9f9f9;
@@ -144,33 +146,55 @@ main {
 
 .review-tabs {
   display: flex;
-  justify-content: space-around; 
-  margin-bottom: 20px;
-  background: #82b0d2;
-  border-radius: 8px;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  padding: 8px;
+  background: #eaf0f4;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(99, 115, 129, 0.08);
 }
 
 .tab-btn {
   flex: 1;
-  background: #82b0d2;
-  padding: 10px;
+  padding: 12px 20px;
   border: none;
-  border-radius:5px;
+  border-radius: 8px;
+  background: transparent;
+  color: #4a6fa9;
+  font-weight: 600;
   cursor: pointer;
-  text-align: center;
-  transition: all 0.3s ease;
-  font-weight: bold;
+  transition: all 0.2s ease;
 }
 
-.tab-btn.active, .tab-btn:hover {
-  background: white;
+.tab-btn:hover {
+  background: rgba(1, 11, 25, 0.08);
   color: #82b0d2;
-  font-weight: bold;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn.active {
+  background: #6b90c7;
+  color: white;
+  box-shadow: 0 2px 6px rgba(107, 144, 199, 0.2);
+}
+
+.generate-btn {
+  padding: 12px 24px;
+  background: #d67d5a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.generate-btn:hover {
+  background: #c46f4e;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(101, 116, 138, 0.3);
 }
 
 .review-content {
-
   padding: 20px;
   background: #ffffff;
   border: 1px solid #ccc;
@@ -184,76 +208,229 @@ main {
   display: block;
 }
 
-/* Overall Tab Styles */
 .right-panel .review-content strong {
   font-weight: bold;
 }
 
-/* Section Tab Styles */
-.section-aspect h3 {
-  font-size: 1.5em;
+.section-aspect, .criteria-aspect, .overall-review {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.section-aspect:hover, .criteria-aspect:hover, .overall-review:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.section-aspect h3, .criteria-aspect h2, .overall-review h2 {
+  color: #2b639f;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e0e7ff;
+  position: relative;
+}
+
+.section-aspect h3::after, .criteria-aspect h2::after, .overall-review h2::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background-color: #4f46e5;
+}
+
+.critique, .recommendation, .reference {
+  margin-bottom: 1.2rem;
+}
+
+.critique > div, .recommendation > div, .reference > div {
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.critique > div {
+  color: #e67e22;
+}
+
+.recommendation > div {
+  color: #346cc7;
+}
+
+.reference > div {
+  color: #238647;
+}
+
+.critique p, .recommendation p{
+  color: #4b5563;
+  line-height: 1.6;
+  margin-left: 24px;
+}
+
+.reference-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: rgba(22, 163, 74, 0.05);
+  border: 1px solid rgba(22, 163, 74, 0.1);
+  color: #166534;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.reference-box:hover {
+  background-color: rgba(22, 163, 74, 0.1);
+  transform: translateX(4px);
+}
+
+.reference-box:active {
+  transform: scale(0.98);
+}
+
+.reference-box span {
+  color: #409862;
+  overflow: visible; 
+  white-space: normal; 
+  word-wrap: break-word; 
+  max-width: 100%;
+  display: inline-block;
+  font-weight: normal;
+}
+
+/* Criteria */
+.criteria-details {
+  margin-top: 20px;
+}
+
+.criteria-card {
+  margin-bottom: 25px;
+  padding: 15px;
+  background-color: #f8f9fa;
+}
+
+.criteria-card h4 {
+  color: #2a4e71;
   margin-bottom: 10px;
-  color: #0056b3;
-}
-
-.section-aspect h4,
-.section-aspect h5 {
-  margin-top: 15px;
-  font-size: 1.2em;
-  color: #333;
-}
-
-/* Criteria Tab Styles */
-/* Criteria Container */
-.criteria-aspect {
-  margin-bottom: 20px;
-}
-
-.criteria-aspect h3 {
-  font-size: 1.5em;
-  color: #0056b3;
-  margin-bottom: 10px;
-}
-
-.criteria-aspect h4 {
-  font-size: 1.3em;
-  color: #333;
-  margin-top: 15px;
-  margin-bottom: 10px;
-}
-
-.criteria-aspect h5 {
-  font-size: 1.2em;
-  color: #555;
-  margin-top: 10px;
-  margin-bottom: 5px;
-}
-
-.criteria-aspect strong {
   font-weight: bold;
-  color: #000;
+  font-size: 1.1rem;
 }
 
-.criteria-aspect li {
-  margin-left: 20px;
-  list-style-type: disc;
+.criteria-card ul {
+  list-style: none;
+  padding-left: 0;
 }
 
-.criteria-aspect br {
-  line-height: 1.5;
+.recommendation-title {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.reference-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reference-title {
+  color: #2980b9;
+  font-weight: 600;
+}
+
+.reference-box2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: rgba(37, 99, 235, 0.05);
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  color: #4a6fa9;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reference-box2:hover {
+  background-color: rgba(37, 99, 235, 0.1);
+  border-color: rgba(37, 99, 235, 0.3);
+  transform: translateX(4px);
+}
+
+.reference-box2:active {
+  transform: scale(0.98);
+}
+
+.reference-box2 span {
+  overflow: visible; 
+  white-space: normal; 
+  word-wrap: break-word; 
+  max-width: 100%;
+  display: inline-block;
 }
 
 
-
-mark {
-  padding: 0 2px;
-  border-radius: 3px;
+.overall-comment {
+  margin-top: 30px;
 }
 
-mark[style*="yellow"] {
-  background-color: yellow;
+.overall-comment h3 {
+  color: #333;
+  margin-bottom: 15px;
 }
 
-mark[style*="lightblue"] {
-  background-color: lightblue;
+.overall-comment p {
+  line-height: 1.6;
+  color: #555;
+}
+
+.overall-comment ul {
+  padding-left: 20px;
+  color: #555;
+}
+
+.no-overall-review {
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.overall-text {
+  color: #4b5563;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin: 1.2rem 0;
+}
+
+.highlighted-text {
+  font-weight: 600;
+  color: #6b90c7;
+  font-size: 1.05em;
+}
+
+.overall-review {
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.overall-review h2 {
+  color: #2b4d7e;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e0e7ff;
+  padding-bottom: 0.8rem;
 }

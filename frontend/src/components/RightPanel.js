@@ -133,55 +133,84 @@ const handleTabChange = (tab) => {
   }
 };  
 
-  const renderSection = (sections) => {
-    if (!sections || !Array.isArray(sections)) {
-      return <p>No section review available.</p>;
-    }
+const renderSection = (sections ,overallSummary) => {
+  if (!sections || !Array.isArray(sections)) {
+    return <p>No section review available.</p>;
+  }
 
-    return sections.map((item, index) => (
-      <div key={index}>
-        <h3>{item.section}</h3>
-        <p>
-          <strong>Critique:</strong> {item.critique}
-        </p>
-        <div style={{ marginTop: '0.8rem' }}>
-        <strong>Reference:</strong>
-        <div
-          onClick={() => onJumpToReference(item.reference)}
-          style={{
-            display: 'inline-block',
-            position: 'relative',
-            color: '#3b82f6', // 品牌蓝色
-            padding: '4px 8px',
-            borderRadius: '4px',
-            backgroundColor: 'rgba(59, 130, 246, 0.05)',
-            transition: 'all 0.2s',
-            '&:hover': {
-              backgroundColor: 'rgba(59, 130, 246, 0.1)',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            },
-            '&:active': {
-              transform: 'scale(0.98)'
-            }
-          }}
+  return sections.map((item, index) => (
+    <div key={index} className="section-aspect">
+      <h3>
+        {item.section}
+      </h3>
+
+      <div className="critique">
+        <div>
+          <svg 
+            width="16" 
+            height="16" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor"
+          >
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+          Critique
+        </div>
+        <p>{item.critique}</p>
+      </div>
+
+    <div className="recommendation">
+      <div>
+        <svg 
+          width="16" 
+          height="16" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor"
+          strokeWidth="2"
         >
-          {item.reference}
-          {/* 底部装饰线 */}
-          <div style={{
-            position: 'absolute',
-            bottom: '-2px',
-            left: 0,
-            right: 0,
-            height: '1px',
-            backgroundColor: 'rgba(59, 130, 246, 0.3)',
-            transition: 'all 0.2s'
-          }} />
+          <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+        </svg>
+        Recommendation
+      </div>
+      <p>{item.recommendation}</p>
+    </div>
+
+      <div className="reference">
+        <div>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+          </svg>
+          Reference
+        </div>
+        <div className="reference-box" onClick={() => onJumpToReference(item.reference)}>
+         <span >
+            {item.reference}
+          </span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
         </div>
       </div>
-      </div>
-    ));
-  };
+    </div>
+    
+  ))}
 
+  
+  
   const renderCriteria = (criteriaData) => {
     if (!criteriaData || typeof criteriaData !== "object") {
       return <p>No criteria review available.</p>;
@@ -206,74 +235,49 @@ const handleTabChange = (tab) => {
       const { criteria = [], overallComment } = parsedCategory;
   
       return (
-        <div key={categoryName} style={{ marginBottom: "40px" }}>
-          {/* 大类标题（蓝色） */}
-          <h2 style={{ color: "#2c3e72", borderBottom: "2px solid #ccc", paddingBottom: "8px" }}>
+        <div key={categoryName} className="criteria-aspect">
+          <h2>
             {categoryName}
           </h2>
   
-          {/* 具体评审标准（不显示 "Criteria Details" 标题） */}
-          <div style={{ marginTop: "20px" }}>
+          <div className="criteria-details">
             {criteria.map((criterion, idx) => (
-              <div key={idx} style={{ marginBottom: "25px", padding: "15px", backgroundColor: "#f8f9fa" }}>
-                {/* 具体标准标题 */}
-                <h4 style={{ color: "#2c3e50", marginBottom: "10px" }}>{criterion.aspect}</h4>
-                <ul style={{ listStyle: "none", paddingLeft: "0" }}>
+              <div key={idx} className="criteria-card">
+                <h4>{criterion.aspect}</h4>
+                <ul>
                   {criterion.recommendations?.map((rec, recIdx) => (
-                    <li key={recIdx} style={{ marginBottom: "15px" }}>
-                      <div style={{ fontWeight: "600", color: "#2980b9" }}>
+                    <li key={recIdx}>
+                      <div className="recommendation-title">
                         Recommendation:
                       </div>
-                      <div style={{ marginBottom: "8px" }}>{rec.recommendation}</div>
-                      <div style={{ 
-                    marginTop: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px"
-                  }}>
-                    <span style={{
-                      color: "#16a34a", // 保持绿色标签
-                      fontWeight: "600",
-                    }}>Reference:</span>
+                      <div>{rec.recommendation}</div>
+                      <div className="reference-container">
+                    <span className="reference-title">Reference:</span>
                     
-                    <div
-                      onClick={() => onJumpToReference(rec.reference)}
-                      style={{
-                        cursor: "pointer",
-                        color: "#2563eb", // 蓝色文字
-                        padding: "6px 12px",
-                        borderRadius: "4px",
-                        backgroundColor: "rgba(37, 99, 235, 0.05)",
-                        border: "1px solid rgba(37, 99, 235, 0.1)",
-                        transition: "all 0.2s",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        "&:hover": {
-                          backgroundColor: "rgba(37, 99, 235, 0.1)",
-                          borderColor: "rgba(37, 99, 235, 0.3)",
-                          transform: "translateX(3px)"
-                        }
-                      }}
-                    >
+                    <div className="reference-box2"
+                      onClick={() => onJumpToReference(rec.reference)}>
                       <svg
-                        width="14"
-                        height="14"
+                        width="16"
+                        height="16"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
                         style={{ flexShrink: 0 }}
                       >
-                        <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-                      </svg>
-                      <span style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: "400px"
-                      }}>
+                      <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>                      </svg>
+                      <span>
                         {rec.reference}
                       </span>
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                      </svg>
                     </div>
                   </div>
                     </li>
@@ -284,14 +288,12 @@ const handleTabChange = (tab) => {
           </div>
   
           {/* 总体评论 */}
-          <div style={{ marginTop: "30px" }}>
-            <h3 style={{ color: "#333", marginBottom: "15px" }}>Overall Comment</h3>
-            <p style={{ lineHeight: "1.6", color: "#555" }}>
-              {overallComment?.summary || "No summary available."}
-            </p>
-            <ul style={{ paddingLeft: "20px", color: "#555" }}>
+          <div className="overall-comment">
+            <h3 >Overall Comment</h3>
+            <p >{overallComment?.summary || "No summary available."}</p>
+            <ul>
               {overallComment?.recommendations?.map((rec, idx) => (
-                <li key={idx} style={{ marginBottom: "8px" }}>{rec}</li>
+                <li key={idx} >{rec}</li>
               ))}
             </ul>
           </div>
@@ -301,11 +303,43 @@ const handleTabChange = (tab) => {
   };
 
   const renderOverall = (content) => {
-    if (!content) return <p>No overall review available.</p>;
+    if (!content) return (
+      <p className="no-overall-review">
+        No overall review available
+      </p>
+    );
+  
+    // 安全解析内容
     const parsedContent = content
-      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\n/g, "<br>");
-    return <div dangerouslySetInnerHTML={{ __html: parsedContent }} />;
+      .split('\n\n')
+      .map((paragraph, index) => {
+        const elements = paragraph.split(/(\*\*.+?\*\*)/g).map((text, i) => {
+          if (text.startsWith('**') && text.endsWith('**')) {
+            const cleanText = text.slice(2, -2);
+            return (
+              <span key={i} className="highlighted-text">
+                {cleanText}
+              </span>
+            );
+          }
+          return text;
+        });
+  
+        return (
+          <p key={index} className="overall-text">
+            {elements}
+          </p>
+        );
+      });
+  
+    return (
+      <div className="overall-review">
+        <h2>
+          Overall Review
+        </h2>
+        {parsedContent}
+      </div>
+    );
   };
 
   const renderContent = () => {
@@ -347,6 +381,9 @@ const handleTabChange = (tab) => {
           By Criteria
         </button>
         <button className="generate-btn" onClick={handleGenerateResponse}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13 3v7h7v2h-7v7h-2v-7H4v-2h7V3h2zm-1 18c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9-4.03 9-9 9z"/>
+          </svg>
           Generate Response
         </button>
       </div>
