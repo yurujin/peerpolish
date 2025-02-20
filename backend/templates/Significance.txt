@@ -57,11 +57,11 @@
             "aspect": "Theoretical Contribution",
             "recommendations": [
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
                "reference": "Include the relevant original text from the manuscript here."
             },
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
                "reference": "Include the relevant original text from the manuscript here."
             }
             ]
@@ -70,7 +70,7 @@
             "aspect": "Practical Applicability",
             "recommendations": [
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
                "reference": "Include the relevant original text from the manuscript here."
             }
             ]
@@ -79,7 +79,7 @@
             "aspect": "Future Research Guidance",
             "recommendations": [
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
                "reference": "Include the relevant original text from the manuscript here."
             }
             ]
@@ -88,7 +88,7 @@
             "aspect": "Knowledge Contribution",
             "recommendations": [
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
                "reference": "Include the relevant original text from the manuscript here."
             }
             ]

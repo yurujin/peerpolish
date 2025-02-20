@@ -32,7 +32,7 @@ Return the critique and recommendations for each section of the manuscript in th
         "section": "The section title extracted from original script.",
         "critique": "Clearly specify the research clarity, logical flow, relevance and adequacyin the content of the section.",
         "recommendation": "Based on the critique, provide actionable recommendation and suggestion for improvement with examples",
-        "reference": "Direct quote from source material."
+        "reference": "Include the relevant original text from the manuscript here."
         "position": {
           "pageIndex": 0,
           "top": 5,
@@ -45,7 +45,7 @@ Return the critique and recommendations for each section of the manuscript in th
         "section": "The section title extracted from original script.",
         "critique": "Clearly specify the research clarity, logical flow, relevance and adequacyin the content of the section.",
         "recommendation": "Based on the critique, provide actionable recommendation and suggestion for improvement with examples",
-        "reference": "Direct quote from source material."
+        "reference": "Include the relevant original text from the manuscript here."
         "position": {
           "pageIndex": 0,
           "top": 5,
