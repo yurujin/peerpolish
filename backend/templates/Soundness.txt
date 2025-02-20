@@ -71,11 +71,11 @@
       "aspect": "Supporting Figures and Tables",
       "recommendations": [
         {
-          "recommendation": "Your recommendation here.",
+          "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
           "reference": "Referenced original text from the manuscript here."
         },
         {
-          "recommendation": "Your recommendation here.",
+          "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
           "reference": "Referenced original text from the manuscript here."
         }
       ]
@@ -84,7 +84,7 @@
       "aspect": "Data Quality",
       "recommendations": [
         {
-          "recommendation": "Your recommendation here.",
+          "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
           "reference": "Referenced original text from the manuscript here."
         }
       ]
@@ -93,7 +93,7 @@
       "aspect": "Precise Methodology",
       "recommendations": [
         {
-          "recommendation": "Your recommendation here.",
+          "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
           "reference": "Referenced original text from the manuscript here."
         }
       ]
@@ -102,7 +102,7 @@
       "aspect": "Coherence and Integrity",
       "recommendations": [
         {
-          "recommendation": "Your recommendation here.",
+          "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
           "reference": "Referenced original text from the manuscript here."
         }
       ]
@@ -111,7 +111,7 @@
       "aspect": "Quality of Argumentation",
       "recommendations": [
         {
-          "recommendation": "Your recommendation here.",
+          "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
           "reference": "Referenced original text from the manuscript here."
         }
       ]
@@ -120,7 +120,7 @@
       "aspect": "Logical Soundness",
       "recommendations": [
         {
-          "recommendation": "Your recommendation here.",
+          "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
           "reference": "Referenced original text from the manuscript here."
         }
       ]
@@ -129,7 +129,7 @@
       "aspect": "Main Findings and Discussion",
       "recommendations": [
         {
-          "recommendation": "Your recommendation here.",
+          "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
           "reference": "Referenced original text from the manuscript here."
         }
       ]

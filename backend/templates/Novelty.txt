@@ -55,11 +55,11 @@
             "aspect": "Innovative Methods",
             "recommendations": [
             {
-               "recommendation": "Describe your recommendation here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
                "reference": "Include the relevant original text from the manuscript here."
             },
             {
-               "recommendation": "Describe your second recommendation here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
                "reference": "Include the relevant original text from the manuscript here."
             }
             ]
@@ -68,7 +68,7 @@
             "aspect": "New Empirical Results",
             "recommendations": [
             {
-               "recommendation": "Describe your recommendation here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
                "reference": "Include the relevant original text from the manuscript here."
             }
             ]
@@ -77,7 +77,7 @@
             "aspect": "Novel Interpretations",
             "recommendations": [
             {
-               "recommendation": "Describe your recommendation here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
                "reference": "Include the relevant original text from the manuscript here."
             }
             ]
@@ -86,7 +86,7 @@
             "aspect": "Original Theoretical Insights",
             "recommendations": [
             {
-               "recommendation": "Describe your recommendation here.",
+               "recommendation": "Describe your detailed recommendation and suggestion for improvement here.",
                "reference": "Include the relevant original text from the manuscript here."
             }
             ]
