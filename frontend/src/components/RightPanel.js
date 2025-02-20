@@ -287,7 +287,6 @@ const renderSection = (sections ,overallSummary) => {
             ))}
           </div>
   
-          {/* 总体评论 */}
           <div className="overall-comment">
             <h3 >Overall Comment</h3>
             <p >{overallComment?.summary || "No summary available."}</p>
@@ -309,7 +308,6 @@ const renderSection = (sections ,overallSummary) => {
       </p>
     );
   
-    // 安全解析内容
     const parsedContent = content
       .split('\n\n')
       .map((paragraph, index) => {

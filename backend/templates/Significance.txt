@@ -58,11 +58,11 @@
             "recommendations": [
             {
                "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text from the manuscript here."
+               "reference": "Include the relevant original text needing revision from the manuscript here."
             },
             {
                "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text from the manuscript here."
+               "reference": "Include the relevant original text needing revision from the manuscript here."
             }
             ]
          },
@@ -71,7 +71,7 @@
             "recommendations": [
             {
                "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text from the manuscript here."
+               "reference": "Include the relevant original text needing revision from the manuscript here."
             }
             ]
          },
@@ -80,7 +80,7 @@
             "recommendations": [
             {
                "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text from the manuscript here."
+               "reference": "Include the relevant original text needing revision from the manuscript here."
             }
             ]
          },
@@ -89,7 +89,7 @@
             "recommendations": [
             {
                "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text from the manuscript here."
+               "reference": "Include the relevant original text needing revision from the manuscript here."
             }
             ]
          }

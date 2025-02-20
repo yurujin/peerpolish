@@ -54,10 +54,10 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
 
       references.forEach((ref) => {
         const cleanFullText = fullText
-          .replace(/[^a-zA-Z]/g, "") // 移除所有非单词字符
-          .toLowerCase();        // 转换为全小写
+          .replace(/[^a-zA-Z]/g, "") 
+          .toLowerCase();        
           const cleanSearchText = ref.reference
-          .replace(/[^a-zA-Z]/g, '') // 移除非字母字符
+          .replace(/[^a-zA-Z]/g, '') 
           .toLowerCase();
 
 
@@ -116,7 +116,7 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
 
               foundHighlights.push({
                 ...highlightArea,
-                referenceText: ref.reference, // 添加参考文本
+                referenceText: ref.reference, 
               });
             });
           }
@@ -174,28 +174,21 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
 
   useEffect(() => {
     if (!jumpTarget  || cachedHighlights.length === 0) {
-      console.log("跳转条件不满足:", { jumpTarget,  cachedHighlights });
       return;
     }
   
-    console.log("开始处理跳转:", jumpTarget);
     
-    // 精确匹配逻辑
     const target = cachedHighlights.find(h => 
       h.referenceText.trim() === jumpTarget.trim()
     );
   
     if (target) {
-      console.log("找到匹配高亮区域:", target);
       
-      // 确保目标页面已加载
 
         jumpToHighlightAreaRef.current(target);
         
 
     } else {
-      console.warn("未找到匹配的高亮区域");
-      console.log("当前缓存的高亮数据:", cachedHighlights);
     }
   }, [jumpTarget, cachedHighlights]);
 
