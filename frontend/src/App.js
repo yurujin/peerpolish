@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LeftPanel from "./components/LeftPanel";
 import RightPanel from "./components/RightPanel";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import "./App.css";
+
+import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { initGA, trackPageView } from "./ga"; 
 
 
 function App() {
@@ -15,6 +18,10 @@ function App() {
   const [criteriaData, setCriteriaData] = useState(null); 
 
   const [jumpTarget, setJumpTarget] = useState(null);
+
+  useEffect(() => {
+    initGA(); 
+  }, []);
 
   const handleJumpToReference = (reference) => {
     console.log("[App] Jump target received:", reference); 
@@ -45,6 +52,8 @@ function App() {
   };
 
   return (
+    <Router>
+      <GAListener />
     <div className="app-container">
       <Header />
 
@@ -71,7 +80,19 @@ function App() {
       </main>
       <Footer />
     </div>
+    </Router>
   );
 }
+
+const GAListener = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location]);
+
+  return null;
+};
+
 
 export default App;
