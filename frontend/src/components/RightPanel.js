@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { generateAIResponse } from "../services/api";
 
+import { trackEvent } from "../ga"; 
+
 function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetData ,onJumpToReference}) {
   const [responses, setResponses] = useState(null);
   const [activeTab, setActiveTab] = useState("overall");
@@ -11,12 +13,17 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
     console.log("File passed to RightPanel:", file);
     if (!file) {
         setError("No file selected for generating response.");
+
+        trackEvent("Generate Response", "Error", "No File Selected");
+
         return;
     }
 
     setLoading(true);
     setError(null);
     setResponses(null);
+
+    trackEvent("Generate Response", "Click", "Start", { file_name: file.name });
 
     try {
         const aiResponses = await generateAIResponse(file);
@@ -27,6 +34,9 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
         if (!aiResponses.sectionReview) {
             console.error("❌ sectionReview is missing:", aiResponses.sectionReview);
             setError("Missing section review in AI response.");
+
+            trackEvent("Generate Response", "Error", "Missing sectionReview", { file_name: file.name });
+
             return;
         }
 
@@ -44,6 +54,8 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
         } catch (err) {
             console.error("❌ Failed to parse JSON:", err);
             setError("Invalid JSON format in AI response.");
+
+            trackEvent("Generate Response", "Error", "Invalid JSON Format", { file_name: file.name });
             return;
         }
 
@@ -51,6 +63,8 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
         if (!Array.isArray(sectionData)) {
             console.error("❌ section_review is not an array:", sectionData);
             setError("Invalid section review format.");
+
+            trackEvent("Generate Response", "Error", "Invalid Section Review Format", { file_name: file.name });
             return;
         }
 
@@ -63,7 +77,7 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
             criterion.recommendations.forEach((rec) => {
               criteriaReferences.push({
                 reference: rec.reference,
-                id: `${categoryName}-${criterion.aspect}-${rec.recommendation.slice(0, 10)}`, // 生成唯一 ID
+                id: `${categoryName}-${criterion.aspect}-${rec.recommendation.slice(0, 10)}`, 
               });
             });
           });
@@ -88,9 +102,17 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
       ...criteriaReferences,
     ]);
 
+    trackEvent("Generate Response", "Success", "Generated", {
+      file_name: file.name,
+      section_count: sectionData.length, 
+  });
+
   } catch (err) {
     console.error("❌ Error generating AI response:", err);
     setError("Failed to generate AI response.");
+
+    trackEvent("Generate Response", "Error", "Unknown Error", { file_name: file.name });
+    
   } finally {
     setLoading(false);
   }
@@ -101,6 +123,9 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
 
 const handleTabChange = (tab) => {
   setActiveTab(tab);
+
+  trackEvent("Switch Review Tab", "Click", tab);
+
   onSetActiveTab(tab);
 
   if (tab === "section" && responses?.sectionReview) {

@@ -8,6 +8,8 @@ import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import axios from "axios";
 import * as pdfjsLib from "pdfjs-dist";
 
+import { trackEvent } from "../ga"; 
+
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
 
 function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, jumpTarget,activeTab }) {
@@ -209,7 +211,15 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
 
     if (selectedFile.type === "application/pdf") {
       const pdfBlobUrl = URL.createObjectURL(selectedFile);
+
+      const previewStartTime = performance.now();
+
       onPdfPreview(pdfBlobUrl);
+
+      trackEvent("PDF Preview", "Start", selectedFile.name, {
+        timestamp: previewStartTime
+      });
+
       return;
     }
 
@@ -223,7 +233,13 @@ function LeftPanel({ onFileSelect, onPdfPreview, pdfUrl, highlightedReferences, 
           responseType: "blob",
         });
         const pdfBlobUrl = URL.createObjectURL(response.data);
+
+        const previewStartTime = performance.now();
         onPdfPreview(pdfBlobUrl);
+        trackEvent("PDF Preview", "Start", selectedFile.name, {
+          timestamp: previewStartTime
+        });
+        
       } catch (err) {
         setError("Failed to convert Word document to PDF.");
       } finally {
