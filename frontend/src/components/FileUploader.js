@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { uploadFile } from "../services/api";
+import { trackEvent } from "../ga"; 
 
 const FileUploader = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -15,6 +16,11 @@ const FileUploader = () => {
             alert("Please select a file first!");
             return;
         }
+
+        trackEvent("File Upload", "Upload", selectedFile.name, {
+            file_size: selectedFile.size, 
+            file_type: selectedFile.type
+        });
 
         const result = await uploadFile(selectedFile);
         setFileContent(result.file_content);
