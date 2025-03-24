@@ -35,7 +35,7 @@ header {
   padding: 20px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: 60px;
+  height: 28px;
   flex-shrink: 0;
 }
 
@@ -48,11 +48,11 @@ header nav h1 {
 /* Footer */
 footer {
   text-align: center;
-  padding: 10px;
+  padding: 0px;
   background: #8ecfc9;
   color: white;
   font-size: 14px;
-  height: 40px;
+  height: 30px;
   flex-shrink: 0;
 }
 

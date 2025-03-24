@@ -16,12 +16,7 @@ const FileUploader = () => {
             alert("Please select a file first!");
             return;
         }
-
-        trackEvent("File Upload", "Upload", selectedFile.name, {
-            file_size: selectedFile.size, 
-            file_type: selectedFile.type
-        });
-
+        
         const result = await uploadFile(selectedFile);
         setFileContent(result.file_content);
         setResponse(result.response);

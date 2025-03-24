@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { generateAIResponse } from "../services/api";
+import { Oval } from 'react-loader-spinner';
 
 import { trackEvent } from "../ga"; 
 
@@ -411,7 +412,24 @@ const renderSection = (sections ,overallSummary) => {
         </button>
       </div>
       <div className="review-content">
-        {loading && <p>Loading AI responses...</p>}
+        {/* {loading && <p>Loading AI responses...</p>} */}
+        {loading && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          marginTop: '20px'
+        }}>
+          <Oval
+            height={30}
+            width={30}
+            color="#2196f3"
+            visible={true}
+            ariaLabel='oval-loading'
+          />
+          <span>Loading AI responses...</span>
+        </div>
+      )}
         {error && <p style={{ color: "red" }}>{error}</p>}
         {!loading && !error && renderContent()}
       </div>
