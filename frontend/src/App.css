@@ -275,7 +275,7 @@ body {
   font-weight: bold;
 }
 
-.section-aspect, .criteria-aspect, .overall-review {
+.section-aspect, .overall-review {
   margin-bottom: 1.5rem;
   padding: 1.25rem;
   background-color: #ffffff;
@@ -371,15 +371,148 @@ body {
   font-weight: normal;
 }
 
+
+
+.overall-comment {
+  margin-top: 30px;
+}
+
+.overall-comment h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.overall-comment p {
+  line-height: 1.6;
+  color: #555;
+}
+
+.overall-comment ul {
+  padding-left: 20px;
+  color: #555;
+}
+
+.no-overall-review {
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.overall-text {
+  color: #4b5563;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin: 1.2rem 0;
+}
+
+.highlighted-text {
+  font-weight: 600;
+  color: #6b90c7;
+  font-size: 1.05em;
+}
+
+.overall-review {
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.overall-review h2 {
+  color: #2b4d7e;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e0e7ff;
+  padding-bottom: 0.8rem;
+}
+
+
+/* CriteriaPanel.css */
+.criteria-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 导航样式 */
+.nav-container {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-shrink: 0;  
+  gap: 8px;
+  padding: 12px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  height: 5%;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  border: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.tab-item.active {
+  position: relative;
+}
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #2196f3;
+  animation: underline 0.3s ease;
+}
+
+.tab-item:hover {
+  background: #e3f2fd;
+}
+
+.tab-indicator {
+  font-size: 12px;
+}
+
+
+
+/* 内容区样式 */
+.content-container {
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+}
+
+.content-section {
+  scroll-margin-top: 60px;
+}
+
+
+
 /* Criteria */
 .criteria-details {
   margin-top: 20px;
 }
 
+
 .criteria-card {
-  margin-bottom: 25px;
-  padding: 15px;
-  background-color: #f8f9fa;
+  margin-bottom: 24px;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 6px;
 }
 
 .criteria-card h4 {
@@ -442,58 +575,17 @@ body {
   display: inline-block;
 }
 
-
-.overall-comment {
-  margin-top: 30px;
-}
-
-.overall-comment h3 {
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.overall-comment p {
-  line-height: 1.6;
-  color: #555;
-}
-
-.overall-comment ul {
-  padding-left: 20px;
-  color: #555;
-}
-
-.no-overall-review {
-  color: #6b7280;
-  font-style: italic;
-  text-align: center;
-  padding: 1.5rem;
-}
-
-.overall-text {
-  color: #4b5563;
-  font-size: 1rem;
-  line-height: 1.8;
-  margin: 1.2rem 0;
-}
-
-.highlighted-text {
-  font-weight: 600;
-  color: #6b90c7;
-  font-size: 1.05em;
-}
-
-.overall-review {
-  padding: 1.5rem;
+.criteria-aspect {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
 }
+  
 
-.overall-review h2 {
-  color: #2b4d7e;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid #e0e7ff;
-  padding-bottom: 0.8rem;
+@keyframes underline {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }

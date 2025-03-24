@@ -12,7 +12,7 @@
 
 ### Review Guidelines:
   1.Recognize and Analyze Article Structure:
-    Identify and adhere to the manuscript's structural components as defined by the author (e.g., Abstract, Introduction, Results).
+    Identify and adhere to all the manuscript's structural components as defined by the author (e.g., Abstract, Introduction, Results).
   2.Critique Each Section:
     Clarity: Is the writing clear and coherent?
     Logical Flow: Does the section align with and support the research objectives?
@@ -24,7 +24,7 @@
 
 ### Expected Output:
 
-Return the critique and recommendations for each section of the manuscript in the following JSON format. Ensure references are included to support critiques for potential highlighting in the original text:
+Return the critique and recommendations for each section of the manuscript in the following JSON format. Ensure references are included to support critiques in the original text:
 
   {
     "section_review": [
@@ -54,7 +54,7 @@ Return the critique and recommendations for each section of the manuscript in th
           "width": 80
         }
       }
-      // Add sections dynamically based on the manuscript structure.
+      // Analyze the manuscript structure and include all relevant sections accordingly.
     ],
     "overall_summary": {
       "strengths": "The manuscript provides a comprehensive overview of blockchain technology from a consumer perspective, highlighting various applications and their implications.",
