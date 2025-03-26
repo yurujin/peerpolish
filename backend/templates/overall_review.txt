@@ -25,9 +25,6 @@ You are a senior peer reviewer tasked with providing a specific and actionable c
 ### Example Output:
 **Overall Review of the Paper**
 
-**Major Point**
-   -List the 2-3 major points that need to be improved most in the entire article content and give the reason
-
 **Specific Recommendations**:
    - Use the format “1. Summary keyword” for each recommendation, followed by a detailed explanation and reasoning. Number recommendations sequentially.
 
