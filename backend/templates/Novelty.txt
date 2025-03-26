@@ -68,11 +68,11 @@
             "recommendations": [
             {
                "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
-               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
+               "reference": "Include the relevant original text needing revision from the manuscript here."
             },
             {
                "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
-               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
+               "reference": "Include the relevant original text needing revision from the manuscript here."
             }
             ]
          },...
