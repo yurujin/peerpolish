@@ -22,37 +22,35 @@
     Returns the explicit position information of the reference text, including pageIndex, top, left, height, and width.
     Offer specific and actionable recommendations for each identified limitation, tailored to the section under review.
 
-### Expected Output:
+###Guidelines for Generating Comments:
+  1.Maintain a holistic perspective: Provide suggestions based on the overall context of the text. Do not raise a criticism or suggestion if the author has already addressed the point later in the text.
 
+  2.Offer specific and actionable feedback: Avoid vague statements such as “this part needs to be more specific.” Instead, explain why the current part lacks specificity, how it can be improved, and why your suggestion would make it clearer or more effective.
+
+  3.Always include examples: Illustrate your feedback with concrete examples to clarify your point and help the author better understand your suggestion.
+
+  4.Always explain your reasoning: Every piece of criticism or advice should be accompanied by a clear rationale, so the author understands the purpose and value of the feedback.
+ 
+  5.Use a respectful and constructive tone: Phrase all comments politely and supportively. Avoid language that could be perceived as harsh, judgmental, or insulting.
+
+
+### Expected Output:
+The generated response should be strictly follow the Guidelines for Generating Comments.
 Return the critique and recommendations for each section of the manuscript in the following JSON format. Ensure references are included to support critiques in the original text:
 
   {
     "section_review": [
       {
         "section": "The section title extracted from original script.",
-        "critique": "Clearly specify the research clarity, logical flow, relevance and adequacyin the content of the section.",
-        "recommendation": "Based on the critique, provide actionable recommendation and suggestion for improvement with examples",
-        "reference": "Include the relevant original text needing revision from the manuscript here."
-        "position": {
-          "pageIndex": 0,
-          "top": 5,
-          "left": 10,
-          "height": 2,
-          "width": 80
-        }
+        "critique": "Clearly specify the research clarity, logical flow, relevance and adequacyin the content of the section, and state the reason.",
+        "recommendation": "Based on the critique, provide actionable recommendation ,suggestion for improvement with examples, and the reason for this recommendation",
+        "reference": "Include the relevant original text in this section needing revision from the manuscript here, don't always cite the first sentence of this section.." //
       },
       {
         "section": "The section title extracted from original script.",
-        "critique": "Clearly specify the research clarity, logical flow, relevance and adequacyin the content of the section.",
-        "recommendation": "Based on the critique, provide actionable recommendation and suggestion for improvement with examples",
-        "reference": "Include the relevant original text needing revision from the manuscript here."
-        "position": {
-          "pageIndex": 0,
-          "top": 5,
-          "left": 10,
-          "height": 2,
-          "width": 80
-        }
+        "critique": "Clearly specify the research clarity, logical flow, relevance and adequacyin the content of the section, and state the reason.",
+        "recommendation": "Based on the critique, provide actionable recommendation ,suggestion for improvement with examples, and the reason for this recommendation",
+        "reference": "Include the relevant original text in this section needing revision from the manuscript here. don't always cite the first sentence of this section.."
       }
       // Analyze the manuscript structure and include all relevant sections accordingly.
     ],
