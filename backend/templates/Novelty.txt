@@ -75,34 +75,7 @@
                "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
             }
             ]
-         },
-         {
-            "aspect": "New Empirical Results",
-            "recommendations": [
-            {
-               "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
-               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
-            }
-            ]
-         },
-         {
-            "aspect": "Novel Interpretations",
-            "recommendations": [
-            {
-               "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
-               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
-            }
-            ]
-         },
-         {
-            "aspect": "Original Theoretical Insights",
-            "recommendations": [
-            {
-               "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
-               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
-            }
-            ]
-         }
+         },...
       ],
       "overallComment": {
          "summary": "Summarize the overall novelty and contributions of the paper here.",

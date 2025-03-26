@@ -29,7 +29,7 @@ You are a senior peer reviewer tasked with providing a specific and actionable c
    -List the 2-3 major points that need to be improved most in the entire article content and give the reason
 
 **Specific Recommendations**:
-   - Use the format “1. [Summary keyword]” for each recommendation, followed by a detailed explanation and reasoning. Number recommendations sequentially.
+   - Use the format “1. Summary keyword” for each recommendation, followed by a detailed explanation and reasoning. Number recommendations sequentially.
 
 **Final Comments**:
 The paper demonstrates significant potential to contribute to the field, but revisions are necessary to improve its structure, clarity, and scientific rigor. Addressing the identified issues will enhance its impact and readability.
