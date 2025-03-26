@@ -46,8 +46,20 @@
    Examine any theoretical advancements proposed in the paper.
    Offer targeted suggestions to refine or expand these insights.
 
+###Guidelines for Generating Comments:
+
+   1.Maintain a holistic perspective: Provide suggestions based on the overall context of the text. Do not raise a criticism or suggestion if the author has already addressed the point later in the text.
+
+   2.Offer specific and actionable feedback: Avoid vague statements such as “this part needs to be more specific.” Instead, explain why the current part lacks specificity, how it can be improved, and why your suggestion would make it clearer or more effective.
+
+   3.Always include examples: Illustrate your feedback with concrete examples to clarify your point and help the author better understand your suggestion.
+
+   4.Always explain your reasoning: Every piece of criticism or advice should be accompanied by a clear rationale, so the author understands the purpose and value of the feedback.
+   
+   5.Use a respectful and constructive tone: Phrase all comments politely and supportively. Avoid language that could be perceived as harsh, judgmental, or insulting.
 
 ### Expected Output
+   - The generated response should be strictly follow the Guidelines for Generating Comments.
    - Structure: Please strictly follow the following structure to generate response, don’t change any structure or word of the format.
    {
       "criteria": [
@@ -55,12 +67,12 @@
             "aspect": "Innovative Methods",
             "recommendations": [
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text needing revision from the manuscript here."
+               "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
+               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
             },
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text needing revision from the manuscript here."
+               "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
+               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
             }
             ]
          },
@@ -68,8 +80,8 @@
             "aspect": "New Empirical Results",
             "recommendations": [
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text needing revision from the manuscript here."
+               "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
+               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
             }
             ]
          },
@@ -77,8 +89,8 @@
             "aspect": "Novel Interpretations",
             "recommendations": [
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text needing revision from the manuscript here."
+               "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
+               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
             }
             ]
          },
@@ -86,8 +98,8 @@
             "aspect": "Original Theoretical Insights",
             "recommendations": [
             {
-               "recommendation": "Describe your detailed recommendation and suggestion for improvement with examples here.",
-               "reference": "Include the relevant original text needing revision from the manuscript here."
+               "recommendation": "Describe your detailed recommendation, reason and suggestion for improvement with examples here.",
+               "reference": "Include relevant original text in the manuscript that needs to be revised or focused on here."
             }
             ]
          }
@@ -98,19 +110,4 @@
             "Provide specific and actionable overall recommendations here."
          ]
       }
-   }
-
-   - Details:
-      1.Criteria:
-         - Includes four categories: Innovative Methods, New Empirical Results, Novel Interpretations, and Original Theoretical Insights.
-         - Each category contains an array of recommendations.
-         - Each recommendation includes:
-            A recommendation field: Specific, actionable critique.
-            A reference field: Quoted original text from the manuscript.
-      2.Overall Comment:
-         - A high-level summary of the paper's novelty and contributions.
-         - An array of recommendations with the most critical areas for improvement.
-
-### Note: 
-   - Adjust the number of recommendations and the level of detail to match the length and complexity of the paper.
-   - Ensure that each recommendation is clear, actionable, and tied to a specific part of the manuscript.  
+   }// Adjust the number of recommendations and the level of detail to match the length and complexity of the paper, ensure a comprehensive and thorough review.

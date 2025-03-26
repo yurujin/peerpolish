@@ -253,7 +253,6 @@ function RightPanel({ file, onSetHighlightedReferences, onSetActiveTab, onSetDat
           behavior: 'smooth'
         });
     
-        window.history.replaceState(null, '', `#${category}`);
       }
     };
     if (!criteriaData || typeof criteriaData !== "object") {
@@ -459,7 +458,7 @@ const renderContent = () => {
                   visible={true}
                   ariaLabel='oval-loading'
                 />
-                <span>Loading AI responses...</span>
+                <span>Loading AI responses, may take a few minutes...</span>
               </div>
             )}
             {error && <p style={{ color: "red" }}>{error}</p>}
