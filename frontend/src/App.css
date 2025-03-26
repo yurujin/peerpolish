@@ -437,7 +437,7 @@ body {
   overflow: hidden;
 }
 
-/* 导航样式 */
+
 .nav-container {
   position: sticky;
   top: 0;
@@ -484,7 +484,7 @@ body {
 }
 
 .tab-indicator {
-  font-size: 12px;
+  font-size: 10px;
 }
 
 
